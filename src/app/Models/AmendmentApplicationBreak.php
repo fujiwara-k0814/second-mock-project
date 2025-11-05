@@ -11,8 +11,8 @@ class AmendmentApplicationBreak extends Model
 
     protected $fillable = [
         'amendment_application_id',
-        'break_start_time',
-        'break_end_time',
+        'break_start',
+        'break_end',
     ];
 
     /**
@@ -21,8 +21,8 @@ class AmendmentApplicationBreak extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'break_start_time' => 'time',
-        'break_end_time' => 'time',
+        'break_start' => 'datetime',
+        'break_end' => 'datetime',
     ];
 
     public function amendmentApplication()

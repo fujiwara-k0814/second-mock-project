@@ -12,8 +12,8 @@ class Attendance extends Model
     protected $fillable = [
         'user_id',
         'date',
-        'clock_in_time',
-        'clock_out_time',
+        'clock_in',
+        'clock_out',
         'comment',
     ];
 
@@ -24,8 +24,8 @@ class Attendance extends Model
      */
     protected $casts = [
         'date' => 'date',
-        'clock_in_time' => 'time',
-        'clock_out_time' => 'time',
+        'clock_in' => 'datetime',
+        'clock_out' => 'datetime',
     ];
 
     public function user()
@@ -33,13 +33,27 @@ class Attendance extends Model
         return $this->belongsTo(User::class);
     }
 
+    //AttendanceBreak
+    //全件取得
     public function attendanceBreaks()
     {
         return $this->hasMany(AttendanceBreak::class);
     }
+    //最新取得
+    public function latestAttendanceBreak()
+    {
+        return $this->hasOne(AttendanceBreak::class)->latestOfMany();
+    }
 
+    //AmendmentApplication
+    //全件取得
     public function amendmentApplications()
     {
         return $this->hasMany(AmendmentApplication::class);
+    }
+    //最新取得
+    public function latestAmendmentApplication()
+    {
+        return $this->hasOne(AmendmentApplication::class)->latestOfMany();
     }
 }

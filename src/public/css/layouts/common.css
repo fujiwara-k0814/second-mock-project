@@ -1,0 +1,48 @@
+body {
+    width: 100vw;
+}
+
+.header {
+    height: 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: black;
+    padding: 0 30px;
+}
+
+.header-logo__inner {
+    width: 250px;
+    height: fit-content;
+    vertical-align: middle;
+}
+
+.header-logo {
+    width: 100%;
+}
+
+.header__nav {
+    height: 100%;
+}
+
+.header__nav ul {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    text-align: center;
+}
+
+.header__nav li {
+    margin-right: 30px;
+}
+
+.header__button {
+    background-color: black;
+    border-style: none;
+    color: white;
+    font-size: 20px;
+    font-weight: 500;
+    cursor: pointer;
+}

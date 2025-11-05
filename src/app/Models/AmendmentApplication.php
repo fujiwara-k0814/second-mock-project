@@ -12,8 +12,8 @@ class AmendmentApplication extends Model
     protected $fillable = [
         'attendance_id',
         'approval_status_id',
-        'clock_in_time',
-        'clock_out_time',
+        'clock_in',
+        'clock_out',
         'comment',
     ];
 
@@ -23,8 +23,8 @@ class AmendmentApplication extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'clock_in_time' => 'time',
-        'clock_out_time' => 'time',
+        'clock_in' => 'datetime',
+        'clock_out' => 'datetime',
     ];
 
     public function attendance()

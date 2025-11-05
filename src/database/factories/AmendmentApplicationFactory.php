@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Carbon;
 use App\Models\Attendance;
 
 class AmendmentApplicationFactory extends Factory
@@ -16,15 +17,16 @@ class AmendmentApplicationFactory extends Factory
     {
         $faker = \Faker\Factory::create('ja_JP');
 
+        $date = Carbon::parse($faker->date());
         $startTime = '10:00:00';
         $endTime = '19:00:00';
 
         return [
             'attendance_id' => Attendance::factory(),
             'approval_status_id' => $faker->numberBetween(1, 2),
-            'new_clock_in_time' => $startTime,
-            'new_clock_out_time' => $endTime,
-            'new_comment' => $faker->boolean() ? '体調不良のため' : null,
+            'clock_in' => Carbon::parse($date->format('Y-m-d') . ' ' . $startTime),
+            'clock_out' => Carbon::parse($date->format('Y-m-d') . ' ' . $endTime),
+            'comment' => $faker->boolean() ? '体調不良のため' : null,
         ];
     }
 }

@@ -23,8 +23,8 @@ class AmendmentApplicationBreakFactory extends Factory
 
         return [
             'amendment_application_id' => AmendmentApplication::factory(),
-            'new_break_start' => Carbon::parse($date->format('Y-m-d') . ' ' . $startTime),
-            'new_break_end' => Carbon::parse($date->format('Y-m-d') . ' ' . $endTime),
+            'break_start' => Carbon::parse($date->format('Y-m-d') . ' ' . $startTime),
+            'break_end' => Carbon::parse($date->format('Y-m-d') . ' ' . $endTime),
         ];
     }
 }

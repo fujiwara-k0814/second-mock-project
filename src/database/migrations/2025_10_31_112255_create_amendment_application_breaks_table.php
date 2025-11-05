@@ -16,8 +16,8 @@ class CreateAmendmentApplicationBreaksTable extends Migration
         Schema::create('amendment_application_breaks', function (Blueprint $table) {
             $table->id();
             $table->foreignId('amendment_application_id')->constrained()->cascadeOnDelete();
-            $table->dateTime('new_break_start');
-            $table->dateTime('new_break_end');
+            $table->dateTime('break_start');
+            $table->dateTime('break_end');
             $table->timestamp('created_at')->useCurrent()->nullable();
             $table->timestamp('updated_at')->useCurrent()->nullable();
         });

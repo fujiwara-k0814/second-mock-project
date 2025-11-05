@@ -31,8 +31,20 @@ class AttendancesTableSeeder extends Seeder
         //テストユーザーのみ前後2か月分の勤怠レコードを作成
         foreach ($users as $user) {
             foreach ($startDate->toPeriod($endDate) as $date) {
-                //土日と今日は未処理(UIで手動確認の為)
+                //未処理(UIで手動確認の為)
+                if ($date->isSameDay(now())) {
+                    continue;
+                }
+
+                //土日、本日は空欄処理 (本日空欄処理はUIで手動確認の為)
                 if ($date->isWeekend() || $date->isSameDay(now())) {
+                    $attendance = Attendance::factory()->create([
+                        'user_id' => $user->id,
+                        'date' => $date,
+                        'clock_in' => null,
+                        'clock_out' => null,
+                        'comment' => null,
+                    ]);
                     continue;
                 }
 
@@ -70,9 +82,9 @@ class AttendancesTableSeeder extends Seeder
                     $amendmentApplication = AmendmentApplication::factory()->create([
                         'attendance_id' => $attendance->id,
                         'approval_status_id' => $approvalStatus,
-                        'new_clock_in_time' => Carbon::createFromTime(rand(8, 10), 0)->format('H:i:s'),
-                        'new_clock_out_time' => Carbon::createFromTime(rand(17, 19), 0)->format('H:i:s'),
-                        'new_comment' => $faker->randomElement(['電車遅延のため', '体調不良のため',])
+                        'clock_in' => $date->copy()->setTime(rand(8, 10), 0),
+                        'clock_out' => $date->copy()->setTime(rand(17, 19), 0),
+                        'comment' => $faker->randomElement(['電車遅延のため', '体調不良のため',])
                     ]);
 
                     //昼休憩以外もランダム取得
@@ -86,20 +98,16 @@ class AttendancesTableSeeder extends Seeder
                         }
                         $amendmentApplicationBreak = AmendmentApplicationBreak::factory()->create([
                             'amendment_application_id' => $amendmentApplication->id,
-                            'new_break_start' => $newStart,
-                            'new_break_end' => $newEnd,
+                            'break_start' => $newStart,
+                            'break_end' => $newEnd,
                         ]);
                     }
 
                     //承認済みの場合レコード更新
                     if ($approvalStatus === 2) {
-                        $attendance->clock_in = Carbon::parse(
-                            $attendance->date->format('Y-m-d') . ' ' . $amendmentApplication->new_clock_in_time
-                        );
-                        $attendance->clock_out = Carbon::parse(
-                            $attendance->date->format('Y-m-d') . ' ' . $amendmentApplication->new_clock_out_time
-                        );
-                        $attendance->comment = $amendmentApplication->new_comment;
+                        $attendance->clock_in = $amendmentApplication->clock_in;
+                        $attendance->clock_out = $amendmentApplication->clock_out;
+                        $attendance->comment = $amendmentApplication->comment;
                         $attendance->save();
 
                         $attendance->attendanceBreaks()->delete();
@@ -107,8 +115,8 @@ class AttendancesTableSeeder extends Seeder
                         foreach ($amendmentApplicationBreaks as $amendmentApplicationBreak) {
                             AttendanceBreak::factory()->create([
                                 'attendance_id' => $attendance->id,
-                                'break_start' => $amendmentApplicationBreak->new_break_start,
-                                'break_end' => $amendmentApplicationBreak->new_break_end,
+                                'break_start' => $amendmentApplicationBreak->break_start,
+                                'break_end' => $amendmentApplicationBreak->break_end,
                             ]);
                         }
                     }
