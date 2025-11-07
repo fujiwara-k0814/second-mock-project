@@ -7,7 +7,7 @@
 @endif
 
 @section('css')
-<link rel="stylesheet" href="{{ asset('css/shared/login') }}">
+<link rel="stylesheet" href="{{ asset('css/shared/login.css') }}">
 @endsection
 
 @section('content')

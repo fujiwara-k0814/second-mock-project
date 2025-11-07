@@ -1,48 +1,74 @@
+//画面ロード時
+document.addEventListener('DOMContentLoaded', () => {
+    updateBreakRows();
+});
+
 //'break-row'への入力イベントを監視
 document.addEventListener('input', (e) => {
-    if (e.target.closest('.break-row')) {
-        updateBreakRows();
+    const row = e.target.closest('.break-row');
+    if (row && isRowFull(row) || isRowEmpty(row)) {
+    updateBreakRows();
     }
 });
 
-function updateBreakRows() {
-    const rows = document.querySelectorAll('.break-row');
-    let lastFilledIndex = -1;   //'-1'が未発見時の初期値
-
-    //'break-row'の最終カウント値を記憶
-    rows.forEach((row, index) => {
-        if (!isRowEmpty(row)) {
-        lastFilledIndex = index;
-        }
-    });
-
-    //最後尾項目の前項目が空欄の場
-    rows.forEach((row, index) => {
-        if (index > lastFilledIndex) {
-        row.remove();
-        }
-    });
-
-    //空欄がなければ1つ追加
-    const currentRows = document.querySelectorAll('.break-row');
-    const lastRow = currentRows[currentRows.length - 1];
-    if (!isRowEmpty(lastRow)) {
-        const index = currentRows.length;
-        const newRow = document.createElement('tr');
-        newRow.classList.add('break-row');
-        newRow.innerHTML = `
-            <th>休憩${index === 0 ? '' : index + 1}</th>
-            <td>
-                <input type="time" name="break_start[${index}]">
-                <span>～</span>
-                <input type="time" name="break_end[${index}]">
-            </td>
-        `;
-        lastRow.parentNode.appendChild(newRow);
-    }
+//入力値空判定
+function isRowEmpty(row) {
+    const inputs = row.querySelectorAll('input[type="time"]'); //開始・終了を取得
+    return Array.from(inputs).every(input => !input.value); //両方空の場合'true'
 }
 
-function isRowEmpty(row) {
-    const inputs = row.querySelectorAll('input[type="time"]');  //開始・終了を取得
-    return Array.from(inputs).every(input => !input.value); //両方空の場合'true'
+//入力値満判定
+function isRowFull(row) {
+    const inputs = row.querySelectorAll('input[type="time"]'); //開始・終了を取得
+    return Array.from(inputs).every(input => input.value); //両方満の場合'true'
+}
+
+//休憩項目の更新
+function updateBreakRows() {
+    const rows = document.querySelectorAll('.break-row');
+    let firstEmptyIndex = null;
+
+    //'break-row'の最初の空欄項目を記憶
+    rows.forEach((row, index) => {
+    if (firstEmptyIndex === null && isRowEmpty(row)) {
+        firstEmptyIndex = index;
+    }
+    });
+
+    //最初の空欄項目より後の空欄項目を削除
+    if (firstEmptyIndex !== null) {
+        rows.forEach((row, index) => {
+            if (index > firstEmptyIndex) {
+            row.remove();
+            }
+        });
+    }
+
+    //空欄がなければ1つ項目を追加
+    const currentRows = document.querySelectorAll('.break-row');
+    const lastRow = currentRows[currentRows.length - 1]; //indexに合わせる為'-1'
+
+    if (!isRowEmpty(lastRow) || lastRow.querySelector('input').disabled) {
+        const index = currentRows.length;
+        const newRow = document.createElement('tr');
+        const disableClass = statusCode === WAIT_CODE ? 'disable' : '';
+        const isDisabled = statusCode === WAIT_CODE ? 'disabled' : '';
+        newRow.classList.add('break-row');
+        newRow.innerHTML = `
+            <th>
+                <label for="break[${index}]">休憩${index === 0 ? '' : index + 1}</label>
+            </th>
+            <td>
+                <input type="time" name="break_start[${index}]" id="break[${index}]" 
+                    class="detail-form__input ${disableClass}" ${isDisabled}>
+                <span>～</span>
+                <input type="time" name="break_end[${index}]" id="break[${index}]" 
+                    class="detail-form__input ${disableClass}" ${isDisabled}>
+            </td>
+        `;
+        
+        //'備考'項目の前に挿入
+        const remarkRow = document.querySelector('.comment-row'); 
+        remarkRow.parentNode.insertBefore(newRow, remarkRow);
+    }
 }

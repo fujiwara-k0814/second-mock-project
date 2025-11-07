@@ -2,16 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 use App\Enums\AttendanceStatus;
 use App\Models\Attendance;
+use App\Models\AttendanceBreak;
 use App\Models\AmendmentApplication;
-use App\Models\User;
+use App\Models\AmendmentApplicationBreak;
 
 class UserAttendanceController extends Controller
 {
+    const WAIT_CODE = 1;
+
     public function create()
     {
         /** @var \App\Models\User $user */
@@ -110,17 +113,22 @@ class UserAttendanceController extends Controller
         
         //総勤務、総休憩、総稼働プロパティ追加(終了時間が無いなどの場合は'null')
         $attendances->each(function ($attendance) {
-            $attendance->total_work_seconds = ($attendance->clock_in && $attendance->clock_out)
+            $attendance->total_work_seconds = (
+                $attendance->clock_in && $attendance->clock_out
+            )
                 ? $attendance->clock_out->diffInSeconds($attendance->clock_in)
                 : null;
 
-            $attendance->total_break_seconds = $attendance->attendanceBreaks->sum(function ($break) {
-                return ($break->break_start && $break->break_end)
-                    ? $break->break_end->diffInSeconds($break->break_start)
-                    : null;
-            });
+            $attendance->total_break_seconds = $attendance->attendanceBreaks
+                ->sum(function ($break) {
+                    return ($break->break_start && $break->break_end)
+                        ? $break->break_end->diffInSeconds($break->break_start)
+                        : null;
+                });
 
-            $attendance->actual_work_seconds = ($attendance->total_work_seconds &&$attendance->total_break_seconds)
+            $attendance->actual_work_seconds = (
+                $attendance->total_work_seconds &&$attendance->total_break_seconds
+            )
                 ? max(0, $attendance->total_work_seconds - $attendance->total_break_seconds)
                 : null;
         });
@@ -136,14 +144,60 @@ class UserAttendanceController extends Controller
     public function edit($attendance_id)
     {
         $attendance = Attendance::with('user', 'attendanceBreaks', 'latestAmendmentApplication')->orderBy('created_at')->find($attendance_id);
-
-        $user = User::find($attendance->user->id);
+        $attendanceId = $attendance_id;
+        $breaks = AttendanceBreak::where('attendance_id', $attendance_id)->orderBy('break_start')->get();
+        $user = $attendance->user;
         $date = $attendance->date;
+        $statusCode = $attendance->latestAmendmentApplication?->approval_status_id;
+        $WAIT_CODE = self::WAIT_CODE;
 
-        if ($attendance->latestAmendmentApplication?->approval_status_id === 2) {
+        if ($statusCode === $WAIT_CODE) {
             $attendance = AmendmentApplication::with('amendmentApplicationBreaks')->find($attendance->latestAmendmentApplication->id);
+            $breaks = AmendmentApplicationBreak::where('amendment_application_id', $attendance->id)->orderBy('break_start')->get();
         }
         
-        return view('shared.attendance-detail', compact('attendance', 'user', 'date'));
+        return view('shared.attendance-detail', compact(
+            'attendance', 
+            'attendanceId', 
+            'breaks', 
+            'user', 
+            'date', 
+            'statusCode', 
+            'WAIT_CODE'
+        ));
+    }
+
+    public function application(Request $request, $attendance_id)
+    {
+        $attendance = Attendance::find($attendance_id);
+        $date = $attendance->date;
+
+        $application['attendance_id'] = $attendance_id;
+        $application['approval_status_id'] = self::WAIT_CODE;
+        $application['clock_in'] = Carbon::parse(
+            $date->format('Y-m-d') . ' ' . $request->input('clock_in')
+        );
+        $application['clock_out'] = Carbon::parse(
+            $date->format('Y-m-d') . ' ' . $request->input('clock_out')
+        );
+        $application['comment'] = $request->input('comment');
+        
+        $amendmentApplication = AmendmentApplication::create($application);
+        
+        foreach ($request->input('break_start', []) as $index => $start) {
+            $end = $request->input("break_end.$index");
+            if ($start && $end) {
+                $break['break_start'] = Carbon::parse(
+                    $date->format('Y-m-d') . ' ' . $start
+                );
+                $break['break_end'] = Carbon::parse(
+                    $date->format('Y-m-d') . ' ' . $end
+                );
+                $break['amendment_application_id'] = $amendmentApplication->id;
+                AmendmentApplicationBreak::create($break);
+            }
+        }
+
+        return redirect("/attendance/detail/$attendance_id");
     }
 }

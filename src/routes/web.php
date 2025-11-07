@@ -27,14 +27,12 @@ Route::middleware('auth:web')->prefix('attendance')->group(function () {
     Route::post('/', [UserAttendanceController::class, 'store']);
     Route::get('/list/{year?}/{month?}', [UserAttendanceController::class, 'index']);
     Route::get('/detail/{id}', [UserAttendanceController::class, 'edit']);
-    Route::post('/detail/{id}', [UserAttendanceController::class, 'update']);
+    Route::post('/detail/{id}', [UserAttendanceController::class, 'application']);
 });
-
 //ユーザー：申請関連
 Route::middleware(['auth:web'])->group(function () {
     Route::get('/stamp_correction_request/list', [UserCorrectionRequestController::class, 'index']);
 });
-
 //ユーザー：メール認証(システム制約でname付与)
 Route::get('/email/verify', [VerifyEmailController::class, 'notice'])
     ->middleware('auth')
@@ -59,7 +57,6 @@ Route::prefix('admin')->group(function () {
         Route::post('/attendance/staff/{id}/export', [StaffAttendanceExportController::class, 'export']);
     });
 });
-
 //管理者：申請関連
 Route::middleware(['auth:admin'])->prefix('stamp_correction_request')->group(function () {
     Route::get('list', [AdminCorrectionRequestController::class, 'index']);
