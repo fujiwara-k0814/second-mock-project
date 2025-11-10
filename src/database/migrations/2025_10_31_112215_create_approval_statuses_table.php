@@ -16,6 +16,7 @@ class CreateApprovalStatusesTable extends Migration
         Schema::create('approval_statuses', function (Blueprint $table) {
             $table->id();
             $table->string('code')->unique();
+            $table->string('name')->unique();
             $table->timestamp('created_at')->useCurrent()->nullable();
             $table->timestamp('updated_at')->useCurrent()->nullable();
         });

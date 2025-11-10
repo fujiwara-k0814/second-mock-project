@@ -22,7 +22,7 @@
                 </a>
             @endif
         </div>
-        @if (Auth::guard('web')->check())
+        @if (Auth::guard('web')->check() && auth()->user()->hasVerifiedEmail())
             <nav class="header__nav">
                 <ul>
                     <li>
@@ -62,7 +62,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="/stamp_correction_request/list">
+                        <a href="/admin/stamp_correction_request/list">
                             <button class="header__button">申請一覧</button>
                         </a>
                     </li>

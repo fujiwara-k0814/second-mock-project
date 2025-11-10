@@ -15,12 +15,8 @@ class ApprovalStatusesTableSeeder extends Seeder
     public function run()
     {
         $params = [
-            [
-                'code' => '承認待ち',
-            ],
-            [
-                'code' => '承認済み',
-            ],
+            ['code' => 'pending', 'name' => '承認待ち'],
+            ['code' => 'approved', 'name' => '承認済み'],
         ];
 
         $range = count($params);

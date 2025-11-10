@@ -8,13 +8,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Fortify\Fortify;
+use Laravel\Fortify\Contracts\LoginResponse;
+use App\Http\Responses\CustomLoginResponse;
 use Laravel\Fortify\Contracts\LogoutResponse;
 use App\Http\Responses\CustomLogoutResponse;
-
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Hash;
-use App\Models\User;
-
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -23,7 +20,8 @@ class FortifyServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //logout先バインド
+        //login,logoutバインド
+        $this->app->singleton(LoginResponse::class, CustomLoginResponse::class);
         $this->app->singleton(LogoutResponse::class, CustomLogoutResponse::class);
     }
 

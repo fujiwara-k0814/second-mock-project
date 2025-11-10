@@ -10,11 +10,10 @@ use App\Models\Attendance;
 use App\Models\AttendanceBreak;
 use App\Models\AmendmentApplication;
 use App\Models\AmendmentApplicationBreak;
+use App\Enums\ApplicationStatus;
 
 class UserAttendanceController extends Controller
 {
-    const WAIT_CODE = 1;
-
     public function create()
     {
         /** @var \App\Models\User $user */
@@ -95,8 +94,8 @@ class UserAttendanceController extends Controller
         /** @var \App\Models\User $user */
         $user = Auth::guard('web')->user();
         $targetDate = Carbon::createFromDate(
-            $year ?? now()->year,   //'now()->**'省略時に現在年月を表示
-            $month ?? now()->month, 
+            $year ?? Carbon::now()->year,   //'now()->**'省略時に現在年月を表示
+            $month ?? Carbon::now()->month, 
             1,   //1日を起点とさせる為'1'を指定
             )
             ->startOfMonth();
@@ -133,37 +132,43 @@ class UserAttendanceController extends Controller
                 : null;
         });
 
-        return view('user.attendance-index', compact(
+        return view('shared.staff-attendance-index', compact(
             'attendances', 
             'targetDate',
             'prev',
-            'next'
+            'next',
         ));
     }
 
     public function edit($attendance_id)
     {
-        $attendance = Attendance::with('user', 'attendanceBreaks', 'latestAmendmentApplication')->orderBy('created_at')->find($attendance_id);
+        //'Attendance','AmendmentApplication'の表示用のモデル共通変数として
+        //'displayAttendance'を使用
+        $displayAttendance = Attendance::with([
+            'user',
+            'latestAmendmentApplication.approvalStatus',
+            'latestAmendmentApplication.amendmentApplicationBreaks'
+        ])->find($attendance_id);
+        $breaks = AttendanceBreak::where('attendance_id', $attendance_id)
+            ->orderBy('break_start')->get();
         $attendanceId = $attendance_id;
-        $breaks = AttendanceBreak::where('attendance_id', $attendance_id)->orderBy('break_start')->get();
-        $user = $attendance->user;
-        $date = $attendance->date;
-        $statusCode = $attendance->latestAmendmentApplication?->approval_status_id;
-        $WAIT_CODE = self::WAIT_CODE;
-
-        if ($statusCode === $WAIT_CODE) {
-            $attendance = AmendmentApplication::with('amendmentApplicationBreaks')->find($attendance->latestAmendmentApplication->id);
-            $breaks = AmendmentApplicationBreak::where('amendment_application_id', $attendance->id)->orderBy('break_start')->get();
+        $user = $displayAttendance->user;
+        $date = $displayAttendance->date;
+        $statusCode = $displayAttendance->latestAmendmentApplication?->approvalStatus->code;
+        
+        if ($statusCode === 'pending') {
+            $displayAttendance = $displayAttendance->latestAmendmentApplication;
+            $breaks = AmendmentApplicationBreak::where('amendment_application_id', $displayAttendance->id)->orderBy('break_start')->get();
+            
         }
         
         return view('shared.attendance-detail', compact(
-            'attendance', 
+            'displayAttendance', 
             'attendanceId', 
             'breaks', 
             'user', 
             'date', 
             'statusCode', 
-            'WAIT_CODE'
         ));
     }
 
@@ -173,19 +178,27 @@ class UserAttendanceController extends Controller
         $date = $attendance->date;
 
         $application['attendance_id'] = $attendance_id;
-        $application['approval_status_id'] = self::WAIT_CODE;
-        $application['clock_in'] = Carbon::parse(
-            $date->format('Y-m-d') . ' ' . $request->input('clock_in')
-        );
-        $application['clock_out'] = Carbon::parse(
-            $date->format('Y-m-d') . ' ' . $request->input('clock_out')
-        );
+        $application['approval_status_id'] = ApplicationStatus::PENDING;
         $application['comment'] = $request->input('comment');
-        
+        if ($request->input('clock_in')) {
+            $application['clock_in'] = Carbon::parse(
+                $date->format('Y-m-d') . ' ' . $request->input('clock_in')
+            );
+        } else {
+            $application['clock_in'] = null;
+        }
+        if ($request->input('clock_out')) {
+            $application['clock_out'] = Carbon::parse(
+                $date->format('Y-m-d') . ' ' . $request->input('clock_out')
+            );
+        } else {
+            $application['clock_out'] = null;
+        }
         $amendmentApplication = AmendmentApplication::create($application);
         
         foreach ($request->input('break_start', []) as $index => $start) {
-            $end = $request->input("break_end.$index");
+            $breakEnds = $request->input('break_end', []);
+            $end = $breakEnds[$index] ?? null;
             if ($start && $end) {
                 $break['break_start'] = Carbon::parse(
                     $date->format('Y-m-d') . ' ' . $start

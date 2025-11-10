@@ -33,7 +33,7 @@ class UsersTableSeeder extends Seeder
         ];
         User::create($param);
 
-        //ビュー確認の為20人ダミー作成
-        User::factory()->count(20)->create();
+        //ビュー確認の為10人ダミー作成
+        User::factory()->count(10)->create();
     }
 }

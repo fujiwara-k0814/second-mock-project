@@ -1,20 +1,31 @@
 @extends('layouts/app')
 
-@section('title', '勤怠一覧画面')
+
+@if (Auth::guard('web')->check())
+    @section('title', '勤怠一覧画面')
+@else
+    @section('title', 'スタッフ別勤怠一覧画面(管理者)')
+@endif
     
 @section('css')
-<link rel="stylesheet" href="{{ asset('css/user/attendance-index.css') }}">    
+<link rel="stylesheet" href="{{ asset('css/shaared/staff-attendance-index.css') }}">    
 @endsection
 
 @section('content')
 <div class="user-attendance__content">
-    <h1 class="user-attendance__title">勤怠一覧</h1>
+    <h1 class="user-attendance__title">
+        {{ Auth::guard('web')->check() ? '勤怠一覧' : $user->name . 'さんの勤怠' }}
+    </h1>
     <nav class="attendance-paginate">
-        <a href="/attendance/list/{{ $prev->year }}/{{ $prev->month }}" class="attendance-paginate__link">
+        <a href="{{ Auth::guard('web')->check() 
+            ? "/attendance/list/$prev->year/$prev->month" 
+            : "/admin/attendance/staff/$user->id/$prev->year/$prev->month" }}" class="attendance-paginate__link">
             ← 前月
         </a>
         <p class="cuttent-month">{{ $targetDate->isoFormat('YYYY/MM') }}</p>
-        <a href="/attendance/list/{{ $next->year }}/{{ $next->month }}" class="attendance-paginate__link">
+        <a href="{{ Auth::guard('web')->check() 
+            ? "/attendance/list/$next->year/$next->month" 
+            : "/admin/attendance/staff/$user->id/$next->year/$next->month" }}" class="attendance-paginate__link">
             → 翌月
         </a>
     </nav>
@@ -35,10 +46,17 @@
                 <td>{{ $attendance->total_break_seconds ? sprintf('%02d:%02d', floor($attendance->total_break_seconds / 3600), ($attendance->total_break_seconds % 3600) / 60) : '' }}</td>
                 <td>{{ $attendance->actual_work_seconds ? sprintf('%02d:%02d', floor($attendance->actual_work_seconds / 3600), ($attendance->actual_work_seconds % 3600) / 60) : '' }}</td>
                 <td>
-                    <a href="/attendance/detail/{{ $attendance->id }}" class="attendance-detail__link">詳細</a>
+                    <a href="{{ Auth::guard('web')->check() 
+                        ? "/attendance/detail/$attendance->id" 
+                        : "/admin/attendance/$attendance->id" }}" class="attendance-detail__link">詳細</a>
                 </td>
             </tr>
         @endforeach
     </table>
+    @if (Auth::guard('admin')->check())
+        <form action="/admin/attendance/staff/{{ $user->id }}/{{ $targetDate->year }}/{{ $targetDate->month }}/export" method="get" class="export-form">
+            <button type="submit" class="export__button">CSV出力</button>
+        </form>
+    @endif
 </div>
 @endsection

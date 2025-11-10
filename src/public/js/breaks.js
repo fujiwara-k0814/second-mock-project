@@ -51,8 +51,8 @@ function updateBreakRows() {
     if (!isRowEmpty(lastRow) || lastRow.querySelector('input').disabled) {
         const index = currentRows.length;
         const newRow = document.createElement('tr');
-        const disableClass = statusCode === WAIT_CODE ? 'disable' : '';
-        const isDisabled = statusCode === WAIT_CODE ? 'disabled' : '';
+        const disableClass = statusCode === 'pending' ? 'disable' : '';
+        const isDisabled = statusCode === 'pending' ? 'disabled' : '';
         newRow.classList.add('break-row');
         newRow.innerHTML = `
             <th>

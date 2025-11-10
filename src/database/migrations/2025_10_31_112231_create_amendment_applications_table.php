@@ -17,8 +17,8 @@ class CreateAmendmentApplicationsTable extends Migration
             $table->id();
             $table->foreignId('attendance_id')->constrained()->cascadeOnDelete();
             $table->foreignId('approval_status_id')->constrained()->cascadeOnDelete();
-            $table->dateTime('clock_in');
-            $table->dateTime('clock_out');
+            $table->dateTime('clock_in')->nullable();
+            $table->dateTime('clock_out')->nullable();
             $table->text('comment');
             $table->timestamp('created_at')->useCurrent()->nullable();
             $table->timestamp('updated_at')->useCurrent()->nullable();

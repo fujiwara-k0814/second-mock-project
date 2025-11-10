@@ -10,6 +10,7 @@ use App\Models\AmendmentApplication;
 use App\Models\AmendmentApplicationBreak;
 use App\Models\User;
 use Faker\Factory;
+use App\Enums\ApplicationStatus;
 
 class AttendancesTableSeeder extends Seeder
 {
@@ -21,9 +22,10 @@ class AttendancesTableSeeder extends Seeder
     public function run()
     {
         $faker = Factory::create();
-
+    
         $targetUserEmails = ['user1@example.com', 'user2@example.com'];
-        $users = User::whereIn('email', $targetUserEmails)->get();
+        // $users = User::whereIn('email', $targetUserEmails)->get();
+        $users = User::all();
 
         $startDate = Carbon::now()->subMonths(2)->startOfMonth();
         $endDate = Carbon::now()->addMonths(2)->endOfMonth();
@@ -31,13 +33,11 @@ class AttendancesTableSeeder extends Seeder
         //テストユーザーのみ前後2か月分の勤怠レコードを作成
         foreach ($users as $user) {
             foreach ($startDate->toPeriod($endDate) as $date) {
-                //未処理(UIで手動確認の為)
-                if ($date->isSameDay(now())) {
-                    continue;
-                }
-
-                //土日、本日は空欄処理 (本日空欄処理はUIで手動確認の為)
-                if ($date->isWeekend() || $date->isSameDay(now())) {
+                //20%の確率で修正申請
+                $breakCheck = $faker->boolean(20);
+                //日曜日、本日は空欄処理 (本日空欄処理はUIで手動確認の為)
+                // if ($date->isSunday() || $date->isSameDay(now())) {
+                if ($breakCheck) {
                     $attendance = Attendance::factory()->create([
                         'user_id' => $user->id,
                         'date' => $date,
@@ -55,8 +55,9 @@ class AttendancesTableSeeder extends Seeder
                     'clock_out' => $date->copy()->setTime(18, 0),
                     'comment' => null,
                 ]);
-                
+
                 //昼休憩以外もランダム取得
+                //'1' → '追加休憩無し', '2' → '追加休憩有り'
                 foreach (range(1, rand(1, 2)) as $i) {
                     if ($i === 2) {
                         $start = $date->copy()->setTime(15, 0);
@@ -73,10 +74,11 @@ class AttendancesTableSeeder extends Seeder
                 }
                 
                 //30%の確率で修正申請
-                $applicationCheck = $faker->boolean(30);
+                $applicationCheck = $faker->boolean(10);
 
                 if ($applicationCheck) {
                     //承認待ち、承認済みのステータス分け
+                    //'1' → 'pending', '2' → 'approved'
                     $approvalStatus = $faker->numberBetween(1, 2);
 
                     $amendmentApplication = AmendmentApplication::factory()->create([
@@ -88,6 +90,7 @@ class AttendancesTableSeeder extends Seeder
                     ]);
 
                     //昼休憩以外もランダム取得
+                    //'1' → '追加休憩無し', '2' → '追加休憩有り'
                     foreach (range(1, rand(1, 2)) as $j) {
                         if ($j === 2) {
                             $newStart = $date->copy()->setTime(15, 30);
@@ -104,7 +107,7 @@ class AttendancesTableSeeder extends Seeder
                     }
 
                     //承認済みの場合レコード更新
-                    if ($approvalStatus === 2) {
+                    if ($approvalStatus === ApplicationStatus::APPROVED) {
                         $attendance->clock_in = $amendmentApplication->clock_in;
                         $attendance->clock_out = $amendmentApplication->clock_out;
                         $attendance->comment = $amendmentApplication->comment;
