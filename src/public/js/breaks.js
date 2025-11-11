@@ -30,9 +30,9 @@ function updateBreakRows() {
 
     //'break-row'の最初の空欄項目を記憶
     rows.forEach((row, index) => {
-    if (firstEmptyIndex === null && isRowEmpty(row)) {
-        firstEmptyIndex = index;
-    }
+        if (firstEmptyIndex === null && isRowEmpty(row)) {
+            firstEmptyIndex = index;
+        }
     });
 
     //最初の空欄項目より後の空欄項目を削除
@@ -53,17 +53,39 @@ function updateBreakRows() {
         const newRow = document.createElement('tr');
         const disableClass = statusCode === 'pending' ? 'disable' : '';
         const isDisabled = statusCode === 'pending' ? 'disabled' : '';
+        const breakStartKey = `break_start.${index}`;
+        const breakEndKey = `break_end.${index}`;
+        const breakStartError = window.laravelErrors?.[breakStartKey]?.[0] ?? '';
+        const breakEndError = window.laravelErrors?.[breakEndKey]?.[0] ?? '';
+        const breakStartValue = window.oldBreakStarts?.[index]
+            ?? window.breakDefaults?.[index]?.start
+            ?? '';
+
+        const breakEndValue = window.oldBreakEnds?.[index]
+            ?? window.breakDefaults?.[index]?.end
+            ?? '';
+
         newRow.classList.add('break-row');
         newRow.innerHTML = `
             <th>
                 <label for="break[${index}]">休憩${index === 0 ? '' : index + 1}</label>
             </th>
             <td>
-                <input type="time" name="break_start[${index}]" id="break[${index}]" 
-                    class="detail-form__input ${disableClass}" ${isDisabled}>
+                <div class="time-wrapper">
+                    <input type="time" name="break_start[${index}]" id="break[${index}]" 
+                    class="detail-form__input ${disableClass}" ${isDisabled} value="${breakStartValue}">
+                    <div class="detail-form__error">
+                        ${breakStartError}
+                    </div>
+                </div>
                 <span>～</span>
-                <input type="time" name="break_end[${index}]" id="break[${index}]" 
-                    class="detail-form__input ${disableClass}" ${isDisabled}>
+                <div class="time-wrapper">
+                    <input type="time" name="break_end[${index}]" id="break[${index}]" 
+                    class="detail-form__input ${disableClass}" ${isDisabled} value="${breakEndValue}">
+                    <div class="detail-form__error">
+                        ${breakEndError}
+                    </div>
+                </div>
             </td>
         `;
         

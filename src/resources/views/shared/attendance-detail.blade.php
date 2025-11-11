@@ -33,13 +33,28 @@
             <tr>
                 <th><label for="clock">出勤・退勤</label></th>
                 <td>
-                    <input type="time" name="clock_in" id="clock" class="detail-form__input {{ $statusCode === 'pending' ? "disable" : '' }}" @if($statusCode === 'pending') disabled @endif 
+                    <div class="time-wrapper">
+                        <input type="time" name="clock_in" id="clock" 
+                        class="detail-form__input {{ $statusCode === 'pending' ? "disable" : '' }}" @if($statusCode === 'pending') disabled @endif 
                         value="{{ old('clock_in') 
                             ?? optional($displayAttendance)?->clock_in?->Format('H:i') }}">
+                        <div class="detail-form__error">
+                            @error('clock_in')
+                                {{ $message }}
+                            @enderror
+                        </div>
+                    </div>
                     <span>～</span>
-                    <input type="time" name="clock_out" id="clock" class="detail-form__input {{ $statusCode === 'pending' ? "disable" : '' }}" @if($statusCode === 'pending') disabled @endif  
-                        value="{{ old('clock_out') 
-                            ?? optional($displayAttendance)?->clock_out?->Format('H:i') }}">
+                    <div class="time-wrapper">
+                        <input type="time" name="clock_out" id="clock" class="detail-form__input {{ $statusCode === 'pending' ? "disable" : '' }}" @if($statusCode === 'pending') disabled @endif  
+                            value="{{ old('clock_out') 
+                                ?? optional($displayAttendance)?->clock_out?->Format('H:i') }}">
+                        <div class="detail-form__error">
+                            @error('clock_out')
+                                {{ $message }}
+                            @enderror
+                        </div>
+                    </div>
                 </td>
             </tr>
             @forelse ($breaks as $index => $break)
@@ -49,9 +64,23 @@
                         <label for="break[{{ $index }}]">休憩{{ $index === 0 ? '' : $index + 1 }}</label>
                     </th>
                     <td>
-                        <input type="time" name="break_start[{{ $index }}]" id="break[{{ $index }}]" class="detail-form__input {{ $statusCode === 'pending' ? "disable" : '' }}" @if($statusCode === 'pending') disabled @endif value="{{ old("break_start.$index") ?? $break->break_start?->format('H:i') }}">
+                        <div class="time-wrapper">
+                            <input type="time" name="break_start[{{ $index }}]" id="break[{{ $index }}]" class="detail-form__input {{ $statusCode === 'pending' ? "disable" : '' }}" @if($statusCode === 'pending') disabled @endif value="{{ old("break_start.$index") ?? $break->break_start?->format('H:i') }}">
+                            <div class="detail-form__error">
+                                @error("break_start.$index")
+                                    {{ $message }}
+                                @enderror
+                            </div>
+                        </div>
                         <span>～</span>
-                        <input type="time" name="break_end[{{ $index }}]" id="break[{{ $index }}]" class="detail-form__input {{ $statusCode === 'pending' ? "disable" : '' }}" @if($statusCode === 'pending') disabled @endif value="{{ old("break_end.$index") ?? $break->break_end?->format('H:i') }}">
+                        <div class="time-wrapper">
+                            <input type="time" name="break_end[{{ $index }}]" id="break[{{ $index }}]" class="detail-form__input {{ $statusCode === 'pending' ? "disable" : '' }}" @if($statusCode === 'pending') disabled @endif value="{{ old("break_end.$index") ?? $break->break_end?->format('H:i') }}">
+                            <div class="detail-form__error">
+                                @error("break_end.$index")
+                                    {{ $message }}
+                                @enderror
+                            </div>
+                        </div>
                     </td>
                 </tr>
             @empty
@@ -60,9 +89,23 @@
                         <label for="break[0]">休憩</label>
                     </th>
                     <td>
-                        <input type="time" name="break_start[0]" id="break[0]" class="detail-form__input {{ $statusCode === 'pending' ? "disable" : '' }}" @if($statusCode === 'pending') disabled @endif>
+                        <div class="time-wrapper">
+                            <input type="time" name="break_start[0]" id="break[0]" class="detail-form__input {{ $statusCode === 'pending' ? "disable" : '' }}" @if($statusCode === 'pending') disabled @endif value="{{ old('break_end.0') }}">
+                            <div class="detail-form__error">
+                                @error('break_start.0')
+                                    {{ $message }}
+                                @enderror
+                            </div>
+                        </div>
                         <span>～</span>
-                        <input type="time" name="break_end[0]" id="break[0]" class="detail-form__input {{ $statusCode === 'pending' ? "disable" : '' }}" @if($statusCode === 'pending') disabled @endif>
+                        <div class="time-wrapper">
+                            <input type="time" name="break_end[0]" id="break[0]" class="detail-form__input {{ $statusCode === 'pending' ? "disable" : '' }}" @if($statusCode === 'pending') disabled @endif value="{{ old('break_end.0') }}">
+                            <div class="detail-form__error">
+                                @error('break_end.0')
+                                    {{ $message }}
+                                @enderror
+                            </div>
+                        </div>
                     </td>
                 </tr>
             @endforelse
@@ -72,6 +115,11 @@
                     <textarea name="comment" id="comment" class="detail-form__input detail-form__comment {{ $statusCode === 'pending' ? "disable" : '' }}" @if($statusCode === 'pending') disabled @endif>
                         {{ old('comment') ?? optional($displayAttendance)->comment }}
                     </textarea>
+                    <div class="detail-form__error">
+                        @error('comment')
+                            {{ $message }}
+                        @enderror
+                    </div>
                 </td>
             </tr>
         </table>
@@ -84,6 +132,13 @@
 </div>
 <script>
     const statusCode = @json($statusCode);
+    window.laravelErrors = @json($errors->toArray());
+    window.oldBreakStarts = @json(old('break_start'));
+    window.oldBreakEnds = @json(old('break_end'));
+    window.breakDefaults = @json($breaks->map(fn($b) => [
+        'start' => optional($b->break_start)->format('H:i'),
+        'end' => optional($b->break_end)->format('H:i'),
+    ]));
 </script>
 <script src="{{ asset('js/breaks.js') }}"></script>
 @endsection

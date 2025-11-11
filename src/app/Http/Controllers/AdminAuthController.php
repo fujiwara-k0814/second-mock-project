@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\LoginRequest;
 
 class AdminAuthController extends Controller
 {
@@ -12,7 +13,7 @@ class AdminAuthController extends Controller
         return view('shared.auth.login');
     }
 
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
         $credentials = $request->only('email', 'password');
         
@@ -20,7 +21,9 @@ class AdminAuthController extends Controller
             return redirect('/admin/attendance/list');
         }
 
-        return back()->withErrors(['email' => 'ログイン情報が登録されていません']);
+        return back()->withErrors([
+            'email' => 'ログイン情報が登録されていません',
+        ])->withInput();
     }
 
 

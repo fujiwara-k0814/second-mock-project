@@ -11,6 +11,7 @@ use App\Models\AttendanceBreak;
 use App\Models\AmendmentApplication;
 use App\Models\AmendmentApplicationBreak;
 use App\Enums\ApplicationStatus;
+use App\Http\Requests\StampCorrectionRequest;
 
 class UserAttendanceController extends Controller
 {
@@ -172,7 +173,7 @@ class UserAttendanceController extends Controller
         ));
     }
 
-    public function application(Request $request, $attendance_id)
+    public function application(StampCorrectionRequest $request, $attendance_id)
     {
         $attendance = Attendance::find($attendance_id);
         $date = $attendance->date;
