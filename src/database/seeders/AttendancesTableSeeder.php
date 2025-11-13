@@ -107,7 +107,7 @@ class AttendancesTableSeeder extends Seeder
                     }
 
                     //承認済みの場合レコード更新
-                    if ($approvalStatus === ApplicationStatus::APPROVED) {
+                    if ($approvalStatus === ApplicationStatus::APPROVED->value) {
                         $attendance->clock_in = $amendmentApplication->clock_in;
                         $attendance->clock_out = $amendmentApplication->clock_out;
                         $attendance->comment = $amendmentApplication->comment;

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use App\Models\Attendance;
 use App\Models\AttendanceBreak;
@@ -10,15 +9,21 @@ use App\Models\AmendmentApplication;
 use App\Models\AmendmentApplicationBreak;
 use App\Enums\ApplicationStatus;
 use App\Http\Requests\StampCorrectionRequest;
+use App\Services\AttendanceSummaryService;
+use App\Services\AmendmentApplicationProcessor;
 
 class AdminAttendanceController extends Controller
 {
     public function index($date = null)
     {
         $targetDate = $date ? Carbon::create($date) : Carbon::now();
-        $attendances = Attendance::with('user', 'amendmentApplications')->whereDate('date', $targetDate)->orderBy('created_at')->get();
         $prev = $targetDate->copy()->subDay();
         $next = $targetDate->copy()->addDay();
+
+        $attendances = Attendance::with('user', 'amendmentApplications')
+            ->whereDate('date', $targetDate)
+            ->orderBy('created_at')
+            ->get();
 
         //総勤務、総休憩、総稼働プロパティ追加(終了時間が無いなどの場合は'null')
         $attendances->each(function ($attendance) {
@@ -76,14 +81,14 @@ class AdminAttendanceController extends Controller
         ));
     }
 
-    public function Correction(StampCorrectionRequest $request, $attendance_id)
+    public function correction(StampCorrectionRequest $request, $attendance_id)
     {
         $attendance = Attendance::find($attendance_id);
         $date = $attendance->date;
         $amendmentApplicationBreaks = [];
 
         $application['attendance_id'] = $attendance_id;
-        $application['approval_status_id'] = ApplicationStatus::APPROVED;
+        $application['approval_status_id'] = ApplicationStatus::APPROVED->value;
         $application['comment'] = $request->input('comment');
         if ($request->input('clock_in')) {
             $application['clock_in'] = Carbon::parse(

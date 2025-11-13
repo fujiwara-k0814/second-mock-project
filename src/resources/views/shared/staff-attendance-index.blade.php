@@ -8,44 +8,44 @@
 @endif
     
 @section('css')
-<link rel="stylesheet" href="{{ asset('css/shaared/staff-attendance-index.css') }}">    
+<link rel="stylesheet" href="{{ asset('css/shared/staff-attendance-index.css') }}">    
 @endsection
 
 @section('content')
-<div class="user-attendance__content">
-    <h1 class="user-attendance__title">
+<div class="attendance__content">
+    <h1 class="attendance__title">
         {{ Auth::guard('web')->check() ? '勤怠一覧' : $user->name . 'さんの勤怠' }}
     </h1>
     <nav class="attendance-paginate">
         <a href="{{ Auth::guard('web')->check() 
             ? "/attendance/list/$prev->year/$prev->month" 
             : "/admin/attendance/staff/$user->id/$prev->year/$prev->month" }}" class="attendance-paginate__link">
-            ← 前月
+            <span class="attendance-paginate__link arrow">← </span>前月
         </a>
-        <p class="cuttent-month">{{ $targetDate->isoFormat('YYYY/MM') }}</p>
+        <p class="current-month">{{ $targetDate->isoFormat('YYYY/MM') }}</p>
         <a href="{{ Auth::guard('web')->check() 
             ? "/attendance/list/$next->year/$next->month" 
             : "/admin/attendance/staff/$user->id/$next->year/$next->month" }}" class="attendance-paginate__link">
-            → 翌月
+            翌月<span class="attendance-paginate__link arrow"> →</span>
         </a>
     </nav>
     <table class="attendance-table">
-        <tr>
-            <th>日付</th>
-            <th>出勤</th>
-            <th>退勤</th>
-            <th>休憩</th>
-            <th>合計</th>
-            <th>詳細</th>
+        <tr class="header-row">
+            <th class="table-header table-header-date">日付</th>
+            <th class="table-header">出勤</th>
+            <th class="table-header">退勤</th>
+            <th class="table-header">休憩</th>
+            <th class="table-header">合計</th>
+            <th class="table-header table-header-detail">詳細</th>
         </tr>
         @foreach ($attendances as $attendance)
-            <tr>
-                <td>{{ $attendance->date->locale('ja')->isoFormat('MM/DD(ddd)') }}</td>
-                <td>{{ $attendance->clock_in ? $attendance->clock_in->format('H:i') : '' }}</td>
-                <td>{{ $attendance->clock_out ? $attendance->clock_out->format('H:i') : '' }}</td>
-                <td>{{ $attendance->total_break_seconds ? sprintf('%02d:%02d', floor($attendance->total_break_seconds / 3600), ($attendance->total_break_seconds % 3600) / 60) : '' }}</td>
-                <td>{{ $attendance->actual_work_seconds ? sprintf('%02d:%02d', floor($attendance->actual_work_seconds / 3600), ($attendance->actual_work_seconds % 3600) / 60) : '' }}</td>
-                <td>
+            <tr class="data-row">
+                <td class="table-data table-data-date">{{ $attendance->date->locale('ja')->isoFormat('MM/DD(ddd)') }}</td>
+                <td class="table-data">{{ $attendance->clock_in ? $attendance->clock_in->format('H:i') : '' }}</td>
+                <td class="table-data">{{ $attendance->clock_out ? $attendance->clock_out->format('H:i') : '' }}</td>
+                <td class="table-data">{{ $attendance->total_break_seconds ? sprintf('%02d:%02d', floor($attendance->total_break_seconds / 3600), ($attendance->total_break_seconds % 3600) / 60) : '' }}</td>
+                <td class="table-data">{{ $attendance->actual_work_seconds ? sprintf('%02d:%02d', floor($attendance->actual_work_seconds / 3600), ($attendance->actual_work_seconds % 3600) / 60) : '' }}</td>
+                <td class="table-data table-data-detail">
                     <a href="{{ Auth::guard('web')->check() 
                         ? "/attendance/detail/$attendance->id" 
                         : "/admin/attendance/$attendance->id" }}" class="attendance-detail__link">詳細</a>

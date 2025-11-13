@@ -179,7 +179,7 @@ class UserAttendanceController extends Controller
         $date = $attendance->date;
 
         $application['attendance_id'] = $attendance_id;
-        $application['approval_status_id'] = ApplicationStatus::PENDING;
+        $application['approval_status_id'] = ApplicationStatus::PENDING->value;
         $application['comment'] = $request->input('comment');
         if ($request->input('clock_in')) {
             $application['clock_in'] = Carbon::parse(

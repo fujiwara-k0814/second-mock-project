@@ -1,0 +1,81 @@
+body {
+    background-color: #f0eff2;
+}
+
+.application__content {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 70px 40px;
+}
+
+.application__title {
+    padding-left: 20px;
+    border-left: 8px solid #000;
+}
+
+.approval-tab__content {
+    height: 40px;
+    margin: 60px 0 50px 0;
+    border-bottom: 1px solid black;
+}
+
+.pending, .approved {
+    text-decoration: none;
+    color: black;
+}
+
+.pending {
+    margin-left: 60px;
+}
+
+.approved {
+    margin-left: 90px;
+}
+
+.active {
+    font-weight: bold;
+}
+
+.application-table {
+    width: 100%;
+    background-color: white;
+    border-radius: 10px;
+    letter-spacing: 0.1em;
+    color: #737373;
+    font-weight: bold;
+}
+
+.header-row {
+    border-bottom: 4px solid #e1e1e1;
+}
+
+.table-header {
+    padding: 10px 10px;
+    text-align: left;
+    width: 180px;
+}
+
+.table-header-status {
+    text-align: center;
+}
+
+.data-row {
+    border-top: 2px solid #e1e1e1;
+}
+
+.table-data {
+    padding: 10px 10px;
+}
+
+.table-data-status {
+    text-align: center;
+}
+
+.table-data-date, .table-data-application {
+    letter-spacing: 0;
+}
+
+.application-detail__link {
+    text-decoration: none;
+    color: black;
+}

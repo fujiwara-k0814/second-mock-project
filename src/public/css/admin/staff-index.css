@@ -1,0 +1,59 @@
+body {
+    background-color: #f0eff2;
+}
+
+.staff__content {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 70px 40px;
+}
+
+.staff__title {
+    padding-left: 20px;
+    border-left: 8px solid #000;
+}
+
+.staff-table {
+    width: 100%;
+    margin-top: 90px;
+    background-color: white;
+    border-radius: 10px;
+    letter-spacing: 0.1em;
+    color: #737373;
+    font-weight: bold;
+}
+
+.header-row {
+    border-bottom: 4px solid #e1e1e1;
+}
+
+.table-header {
+    padding: 10px 10px;
+    width: 250px;
+}
+
+.table-header-email {
+    width: 350px;
+}
+
+.data-row {
+    border-top: 2px solid #e1e1e1;
+}
+
+.table-data {
+    padding: 10px 10px;
+    text-align: center;
+}
+
+.table-header-name, .table-data-name {
+    padding-left: 130px;
+}
+
+.table-header-month, .table-data-month {
+    padding-right: 120px;
+}
+
+.staff-detail__link {
+    text-decoration: none;
+    color: black;
+}

@@ -1,13 +1,28 @@
 //画面ロード時
 document.addEventListener('DOMContentLoaded', () => {
     updateBreakRows();
+
+    // Laravelのold()により追加された休憩行を復元
+    const starts = window.oldBreakStarts ?? [];
+    const ends = window.oldBreakEnds ?? [];
+    const errors = window.laravelErrors ?? {};
+    const existingRows = document.querySelectorAll('.break-row').length;
+    const maxCount = Math.max(starts.length, ends.length);
+
+    for (let i = existingRows; i < maxCount; i++) {
+        const start = starts[i] ?? '';
+        const end = ends[i] ?? '';
+        const startError = errors[`break_start.${i}`]?.[0] ?? '';
+        const endError = errors[`break_end.${i}`]?.[0] ?? '';
+        addBreakRow(i, start, end, startError, endError);
+    }
 });
 
 //'break-row'への入力イベントを監視
 document.addEventListener('input', (e) => {
     const row = e.target.closest('.break-row');
     if (row && isRowFull(row) || isRowEmpty(row)) {
-    updateBreakRows();
+        updateBreakRows();
     }
 });
 
@@ -39,7 +54,7 @@ function updateBreakRows() {
     if (firstEmptyIndex !== null) {
         rows.forEach((row, index) => {
             if (index > firstEmptyIndex) {
-            row.remove();
+                row.remove();
             }
         });
     }
@@ -50,7 +65,6 @@ function updateBreakRows() {
 
     if (!isRowEmpty(lastRow) || lastRow.querySelector('input').disabled) {
         const index = currentRows.length;
-        const newRow = document.createElement('tr');
         const disableClass = statusCode === 'pending' ? 'disable' : '';
         const isDisabled = statusCode === 'pending' ? 'disabled' : '';
         const breakStartKey = `break_start.${index}`;
@@ -60,37 +74,51 @@ function updateBreakRows() {
         const breakStartValue = window.oldBreakStarts?.[index]
             ?? window.breakDefaults?.[index]?.start
             ?? '';
-
         const breakEndValue = window.oldBreakEnds?.[index]
             ?? window.breakDefaults?.[index]?.end
             ?? '';
 
-        newRow.classList.add('break-row');
-        newRow.innerHTML = `
-            <th>
-                <label for="break[${index}]">休憩${index === 0 ? '' : index + 1}</label>
-            </th>
-            <td>
-                <div class="time-wrapper">
-                    <input type="time" name="break_start[${index}]" id="break[${index}]" 
-                    class="detail-form__input ${disableClass}" ${isDisabled} value="${breakStartValue}">
-                    <div class="detail-form__error">
-                        ${breakStartError}
-                    </div>
-                </div>
-                <span>～</span>
-                <div class="time-wrapper">
-                    <input type="time" name="break_end[${index}]" id="break[${index}]" 
-                    class="detail-form__input ${disableClass}" ${isDisabled} value="${breakEndValue}">
-                    <div class="detail-form__error">
-                        ${breakEndError}
-                    </div>
-                </div>
-            </td>
-        `;
-        
-        //'備考'項目の前に挿入
-        const remarkRow = document.querySelector('.comment-row'); 
-        remarkRow.parentNode.insertBefore(newRow, remarkRow);
+        addBreakRow(index, breakStartValue, breakEndValue, breakStartError, breakEndError);
     }
+}
+
+//休憩行の追加
+function addBreakRow(index, startValue = '', endValue = '', startError = '', endError = '') {
+    const disableClass = statusCode === 'pending' ? 'disable' : '';
+    const isDisabled = statusCode === 'pending' ? 'disabled' : '';
+
+    const newRow = document.createElement('tr');
+    newRow.classList.add('break-row');
+    newRow.innerHTML = `
+        <th>
+            <label for="break[${index}]">休憩${index === 0 ? '' : index + 1}</label>
+        </th>
+        <td>
+            <div class="wrapper">
+                <input type="time" name="break_start[${index}]" id="break[${index}]"
+                    class="detail-form__input ${disableClass}" ${isDisabled} value="${startValue}">
+                <div class="detail-form__error">${startError}</div>
+            </div>
+            <span>～</span>
+            <div class="wrapper">
+                <input type="time" name="break_end[${index}]" id="break[${index}]"
+                    class="detail-form__input ${disableClass}" ${isDisabled} value="${endValue}">
+                <div class="detail-form__error">${endError}</div>
+            </div>
+        </td>
+    `;
+
+    //'備考'項目の前に挿入
+    const remarkRow = document.querySelector('.comment-row'); 
+    remarkRow.parentNode.insertBefore(newRow, remarkRow);
+
+    //追加された'input'に対して'.time-empty'を即時判定
+    newRow.querySelectorAll('input[type="time"]').forEach(input => {
+        input.classList.toggle('time-empty', !input.value);
+
+        input.addEventListener('input', () => {
+            input.classList.toggle('time-empty', !input.value);
+        });
+    });
+
 }

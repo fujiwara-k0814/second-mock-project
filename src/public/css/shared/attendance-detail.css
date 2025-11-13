@@ -1,0 +1,160 @@
+body {
+    background-color: #f0eff2;
+}
+
+.detail-form {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 70px 40px;
+}
+
+.detail__title {
+    padding-left: 20px;
+    border-left: 8px solid #000;
+}
+
+.detail-table {
+    margin-top: 50px;
+    width: 100%;
+    background-color: white;
+    border-radius: 10px;
+    letter-spacing: 0.1em;
+    color: #737373;
+    font-weight: bold;
+    text-align: left;
+}
+
+.detail-table tr {
+    display: flex;
+    align-items: center;
+}
+
+.name-row, .date-row, 
+.clock-row, .break-row {
+    border-bottom: 3px solid #e1e1e1;
+}
+
+.detail-table th {
+    padding: 30px 65px;
+    max-width: 350px;
+    width: 100%;
+}
+
+.detail-table td {
+    max-width: 380px;
+    width: 100%;
+    padding-right: 60px;
+    color: black;
+    display: flex;
+    justify-content: space-between;
+}
+
+.name, .year {
+    padding-left: 20px;
+}
+
+.date {
+    padding-right: 15px;
+}
+
+.wrapper {
+    width: 100px;
+}
+
+.detail-form__input {
+    padding: 3px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    letter-spacing: 0.1em;
+    border: 1px solid #e1e1e1;
+    border-radius: 5px;
+    position: relative;
+    font-family: inherit;
+    text-align: center;
+}
+
+.detail-form__input::-webkit-calendar-picker-indicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.time-empty::-webkit-datetime-edit {
+    color: transparent;
+}
+
+.time-empty::-moz-datetime-edit {
+    color: transparent;
+}
+
+.time-empty {
+    caret-color: black;
+}
+
+.detail-form__error {
+    font-size: 14px;
+    color: red;
+}
+
+.comment-row {
+    padding: 15px 0;
+}
+
+.comment-wrapper {
+    width: 100%;
+}
+
+.detail-form__comment {
+    width: 100%;
+    height: 80px;
+    font-size: 14px;
+    text-align: left;
+    padding-left: 10px;
+    resize: none;
+}
+
+.form-wrapper {
+    display: flex;
+    justify-content: right;
+    padding-top: 30px;
+}
+
+.detail-form__button {
+    padding: 8px 40px;
+    background-color: black;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    letter-spacing: 0.1em;
+    border: 1px solid black;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.pending-message {
+    margin: 0;
+    font-size: 16px;
+    font-weight: bold;
+    letter-spacing: 0.1em;
+    color: red;
+}
+
+.disable {
+    color: black;
+    background-color: white;
+    border: none;
+    cursor: default;
+}
+
+.comment-disable {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    line-height: 100%;
+}

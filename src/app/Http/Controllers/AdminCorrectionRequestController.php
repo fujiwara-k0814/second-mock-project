@@ -78,7 +78,7 @@ class AdminCorrectionRequestController extends Controller
             ]);
         }
 
-        $amendment->approval_status_id = ApplicationStatus::APPROVED;
+        $amendment->approval_status_id = ApplicationStatus::APPROVED->value;
         $amendment->save();
 
         return redirect("admin/stamp_correction_request/approve/$amendment->id");

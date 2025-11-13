@@ -24,23 +24,23 @@
             class="approved {{ request('tab') === 'approved' ? 'active' : '' }}">承認済み</a>
     </div>
     <table class="application-table">
-        <tr>
-            <th>状態</th>
-            <th>名前</th>
-            <th>対象日</th>
-            <th>申請理由</th>
-            <th>申請日</th>
-            <th>詳細</th>
+        <tr class="header-row">
+            <th class="table-header table-header-status">状態</th>
+            <th class="table-header">名前</th>
+            <th class="table-header">対象日時</th>
+            <th class="table-header">申請理由</th>
+            <th class="table-header">申請日時</th>
+            <th class="table-header">詳細</th>
         </tr>
         @foreach ($attendances as $attendance)
             @foreach ($attendance->amendmentApplications as $application)
-                <tr>
-                    <td>{{ $application->approvalStatus->name }}</td>
-                    <td>{{ $attendance->user->name }}</td>
-                    <td>{{ $attendance->date->isoFormat('MM/DD') }}</td>
-                    <td>{{ $application->comment }}</td>
-                    <td>{{ $application->created_at->isoFormat('MM/DD') }}</td>
-                    <td>
+                <tr class="data-row">
+                    <td class="table-data table-data-status">{{ $application->approvalStatus->name }}</td>
+                    <td class="table-data">{{ $attendance->user->name }}</td>
+                    <td class="table-data table-data-date">{{ $attendance->date->isoFormat('YYYY/MM/DD') }}</td>
+                    <td class="table-data">{{ $application->comment }}</td>
+                    <td class="table-data table-data-application">{{ $application->created_at->isoFormat('YYYY/MM/DD') }}</td>
+                    <td class="table-data">
                         <a href="{{ Auth::guard('web')->check() 
                             ? "/attendance/detail/$application->attendance_id" 
                             : "/admin/stamp_correction_request/approve/$application->id" }}" class="application-detail__link">詳細</a>

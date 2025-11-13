@@ -1,0 +1,96 @@
+body {
+    background-color: #f0eff2;
+}
+
+.admin-attendance__content {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 70px 40px;
+}
+
+.admin-attendance__title {
+    padding-left: 20px;
+    border-left: 8px solid #000;
+}
+
+.admin-attendance-paginate {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    background-color: white;
+    border-radius: 10px;
+    margin: 40px 0;
+}
+
+.admin-attendance-paginate__link {
+    text-decoration: none;
+    color: #737373;
+    font-weight: bold;
+}
+
+.arrow {
+    color: #b3b3b3;
+    font-weight: bold;
+}
+
+.current-date {
+    position: relative;
+    margin: 10px 0;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.current-date::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    background: url(../../images/calendar.svg) no-repeat;
+    background-size: cover;
+    vertical-align: middle;
+    width: 25px;
+    height: 25px;
+    display: inline-block;
+    transform: translate(-35px, -50%);
+}
+
+.admin-attendance-table {
+    width: 100%;
+    background-color: white;
+    border-radius: 10px;
+    letter-spacing: 0.1em;
+    color: #737373;
+    font-weight: bold;
+}
+
+.header-row {
+    border-bottom: 4px solid #e1e1e1;
+}
+
+.table-header {
+    padding: 10px 40px;
+}
+
+.table-header-detail {
+    text-align: left;
+    width: 170px;
+}
+
+.data-row {
+    border-top: 2px solid #e1e1e1;
+}
+
+.table-data {
+    padding: 10px 40px;
+    text-align: center;
+}
+
+.table-data-detail {
+    text-align: left;
+}
+
+.admin-attendance-detail__link {
+    text-decoration: none;
+    color: black;
+}

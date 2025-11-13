@@ -30,10 +30,6 @@ class StampCorrectionRequest extends FormRequest
                 'required_with:break_start.*',
                 'required_with:break_end.*',
             ],
-            'clock_out' => [
-                'after:clock_in',
-                'required_with:clock_in',
-            ],
             'break_start.*' => [
                 'nullable',
                 'after:clock_in',
@@ -46,6 +42,9 @@ class StampCorrectionRequest extends FormRequest
                 'before:clock_out',
                 'required_with:break_start.*',
             ],
+            'clock_out' => [
+                'required_with:clock_in',
+            ],
             'comment' => ['required'],
         ];
     }
@@ -56,16 +55,15 @@ class StampCorrectionRequest extends FormRequest
             'clock_in.before' => '出勤時間もしくは退勤時間が不適切な値です',
             'clock_in.required_with' => '出勤時間を入力してください',
 
-            'clock_out.after' => '出勤時間もしくは退勤時間が不適切な値です',
-            'clock_out.required_with' => '退勤時間を入力してください',
-
             'break_start.*.after' => '休憩時間が不適切な値です',
             'break_start.*.before' => '休憩時間が不適切な値です',
             'break_start.*.required_with' => '休憩開始時間を入力してください',
 
             'break_end.*.before' => '休憩時間もしくは退勤時間が不適切な値です',
             'break_end.*.required_with' => '休憩終了時間を入力してください',
-            
+
+            'clock_out.required_with' => '退勤時間を入力してください',
+
             'comment.required' => '備考を記入してください',
         ];
     }

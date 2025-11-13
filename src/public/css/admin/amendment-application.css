@@ -1,0 +1,83 @@
+body {
+    background-color: #f0eff2;
+}
+
+.amendment-form {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 70px 40px;
+}
+
+.amendment__title {
+    padding-left: 20px;
+    border-left: 8px solid #000;
+}
+
+.amendment-table {
+    margin-top: 50px;
+    width: 100%;
+    background-color: white;
+    border-radius: 10px;
+    letter-spacing: 0.1em;
+    color: #737373;
+    font-weight: bold;
+    text-align: left;
+}
+
+.amendment-table tr {
+    display: flex;
+    align-items: center;
+}
+
+.name-row,
+.date-row,
+.clock-row,
+.break-row {
+    border-bottom: 3px solid #e1e1e1;
+}
+
+.amendment-table th {
+    padding: 30px 65px;
+    max-width: 350px;
+    width: 100%;
+}
+
+.amendment-table td {
+    max-width: 350px;
+    width: 100%;
+    padding-right: 60px;
+    color: black;
+    display: flex;
+    justify-content: space-between;
+    
+}
+
+.form-wrapper {
+    display: flex;
+    justify-content: right;
+    padding-top: 50px;
+}
+
+.amendment-form__button {
+    padding: 8px 40px;
+    background-color: black;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    letter-spacing: 0.1em;
+    border: 1px solid black;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.approved-message {
+    padding: 8px 15px;
+    margin: 0;
+    background-color: #696969;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    letter-spacing: 0.1em;
+    border: 1px solid #696969;
+    border-radius: 5px;
+}

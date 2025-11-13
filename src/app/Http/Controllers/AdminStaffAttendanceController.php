@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Carbon;
+use App\Services\AttendanceSummaryService;
 
 class AdminStaffAttendanceController extends Controller
 {

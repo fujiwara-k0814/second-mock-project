@@ -10,16 +10,16 @@
 <div class="staff__content">
     <h1 class="staff__title">スタッフ一覧</h1>
     <table class="staff-table">
-        <tr>
-            <th>名前</th>
-            <th>メールアドレス</th>
-            <th>月次勤怠</th>
+        <tr class="header-row">
+            <th class="table-header table-header-name">名前</th>
+            <th class="table-header table-header-email">メールアドレス</th>
+            <th class="table-header table-header-month">月次勤怠</th>
         </tr>
         @foreach ($users as $user)
-            <tr>
-                <td>{{ $user->name }}</td>
-                <td>{{ $user->email }}</td>
-                <td>
+            <tr class="data-row">
+                <td class="table-data table-data-name">{{ $user->name }}</td>
+                <td class="table-data">{{ $user->email }}</td>
+                <td class="table-data table-data-month">
                     <a href="/admin/attendance/staff/{{ $user->id }}" class="staff-detail__link">詳細</a>
                 </td>
             </tr>

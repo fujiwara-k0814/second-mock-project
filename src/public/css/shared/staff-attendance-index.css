@@ -1,0 +1,125 @@
+body {
+    background-color: #f0eff2;
+}
+
+.attendance__content {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 70px 40px;
+}
+
+.attendance__title {
+    padding-left: 20px;
+    border-left: 8px solid #000;
+}
+
+.attendance-paginate {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    background-color: white;
+    border-radius: 10px;
+    margin: 40px 0;
+}
+
+.attendance-paginate__link {
+    text-decoration: none;
+    color: #737373;
+    font-weight: bold;
+}
+
+.arrow {
+    color: #b3b3b3;
+    font-weight: bold;
+}
+
+.current-month {
+    position: relative;
+    margin: 10px 0;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.current-month::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    background: url(../../images/calendar.svg) no-repeat;
+    background-size: cover;
+    vertical-align: middle;
+    width: 25px;
+    height: 25px;
+    display: inline-block;
+    transform: translate(-35px, -50%);
+}
+
+.attendance-table {
+    width: 100%;
+    background-color: white;
+    border-radius: 10px;
+    letter-spacing: 0.1em;
+    color: #737373;
+    font-weight: bold;
+}
+
+.header-row {
+    border-bottom: 4px solid #e1e1e1;
+}
+
+.table-header {
+    padding: 10px 40px;
+}
+
+.table-header-date {
+    text-align: left;
+    width: 190px;
+    padding-left: 50px;
+}
+
+.table-header-detail {
+    text-align: left;
+    width: 170px;
+}
+
+.data-row {
+    border-top: 2px solid #e1e1e1;
+}
+
+.table-data {
+    padding: 10px 40px;
+    text-align: center;
+}
+
+.table-data-date, .table-data-detail {
+    text-align: left;
+}
+
+.table-data-date {
+    padding-left: 50px;
+    width: 190px;
+}
+
+.attendance-detail__link {
+    text-decoration: none;
+    color: black;
+}
+
+.export-form {
+    margin-top: 50px;
+    display: flex;
+    justify-content: right;
+}
+
+.export__button {
+    padding: 8px 30px;
+    background-color: black;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    letter-spacing: 0.1em;
+    border: 1px solid black;
+    border-radius: 5px;
+    cursor: pointer;
+}

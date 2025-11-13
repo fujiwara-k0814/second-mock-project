@@ -1,0 +1,66 @@
+body {
+    background-color: #f0eff2;
+}
+
+.stamp-form {
+    margin: 0 auto;
+    max-width: 500px;
+    text-align: center;
+    padding: 200px 40px;
+}
+
+.work-status {
+    border: 2px solid #c8c8c8;
+    background-color: #c8c8c8;
+    color: #696969;
+    width: fit-content;
+    margin: 0 auto;
+    padding: 5px 15px;
+    border-radius: 20px;
+    letter-spacing: 0.1em;
+    font-weight: bold;
+}
+
+.current-date {
+    display: block;
+    font-size: 34px;
+    margin: 20px 0;
+}
+
+.current-time {
+    display: block;
+    font-size: 70px;
+    font-weight: bold;
+}
+
+.stamp__button-wrapper {
+    display: flex;
+    justify-content: space-between;
+}
+
+.stamp__button {
+    margin-top: 70px;
+    padding: 10px 55px;
+    background-color: black;
+    color: white;
+    font-size: 28px;
+    font-weight: bold;
+    letter-spacing: 0.1em;
+    border: 1px solid black;
+    border-radius: 15px;
+    cursor: pointer;
+}
+
+.stamp__button--white {
+    padding: 10px 40px;
+    background-color: white;
+    color: black;
+    border: 1px solid white;
+}
+
+.clock-out {
+    margin-top: 70px;
+    font-size: 24px;
+    font-weight: bold;
+    letter-spacing: 0.1em;
+}

@@ -41,7 +41,7 @@ Route::get('/email/verify', [VerifyEmailController::class, 'notice'])
 Route::get('/email/verify/{id}/{hash}', [VerifyEmailController::class, 'verify'])
     ->middleware(['auth', 'signed'])
     ->name('verification.verify');
-    
+
 Route::post('/email/verification_notification', [VerifyEmailController::class, 'send'])
     ->middleware(['auth', 'throttle:10,1'])
     ->name('verification.send');
@@ -56,7 +56,7 @@ Route::prefix('admin')->group(function () {
         Route::post('/logout', [AdminAuthController::class, 'logout']);
         Route::get('/attendance/list/{date?}', [AdminAttendanceController::class, 'index']);
         Route::get('/attendance/{id}', [AdminAttendanceController::class, 'edit']);
-        Route::post('/attendance/{id}', [AdminAttendanceController::class, 'Correction']);
+        Route::post('/attendance/{id}', [AdminAttendanceController::class, 'correction']);
         Route::get('/staff/list', [AdminStaffAttendanceController::class, 'index']);
         Route::get('/attendance/staff/{id}/{year?}/{month?}', [AdminStaffAttendanceController::class, 'show']);
         Route::get('/attendance/staff/{id}/{year?}/{month?}/export', [StaffAttendanceExportController::class, 'export']);

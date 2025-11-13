@@ -1,0 +1,38 @@
+.verify__content {
+    max-width: 1540px;
+}
+
+.verify__inner {
+    max-width: 770px;
+    width: 100%;
+    margin: 0 auto;
+    text-align: center;
+    padding: 200px 20px;
+}
+
+.verify__message {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.verify__button {
+    display: inline-block;
+    text-decoration: none;
+    border: 1px solid black;
+    border-radius: 8px;
+    background-color: #d9d9d9;
+    padding: 10px 20px;
+    font-size: 24px;
+    color: black;
+    font-weight: 600;
+    margin: 50px 0;
+}
+
+.verify-send__button {
+    border: none;
+    background: none;
+    font-size: 20px;
+    color: #0073cc;
+    cursor: pointer;
+}

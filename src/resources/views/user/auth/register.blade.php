@@ -1,6 +1,6 @@
 @extends('layouts/app')
 
-@section('title', '会員登録')
+@section('title', '会員登録画面')
 
 @section('css')
 <link rel="stylesheet" href="{{ asset('css/user/register.css') }}">
@@ -39,6 +39,6 @@
         @enderror
     </div>
     <button type="submit" class="register-form__button">登録する</button>
+    <a href="/login" class="login-link">ログインはこちら</a>
 </form>
-<a href="/login" class="login-link">ログインはこちら</a>
 @endsection
