@@ -12,6 +12,7 @@ class AmendmentApplication extends Model
     protected $fillable = [
         'attendance_id',
         'approval_status_id',
+        'date',
         'clock_in',
         'clock_out',
         'comment',
@@ -23,6 +24,7 @@ class AmendmentApplication extends Model
      * @var array<string, string>
      */
     protected $casts = [
+        'date' => 'date',
         'clock_in' => 'datetime',
         'clock_out' => 'datetime',
     ];

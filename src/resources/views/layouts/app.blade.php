@@ -12,7 +12,8 @@
 <body>
     <header class="header">
         <div class="header-logo__inner">
-            @if (Auth::guard('web')->check() || in_array(Route::currentRouteName(), ['login', 'register', 'verification.notice']))
+            @if (Auth::guard('web')->check() || in_array(Route::currentRouteName(), 
+                ['login', 'register', 'verification.notice']))
                 <a href="/attendance">
                     <img src="{{ asset('/images/logo.svg') }}" alt="ロゴ" class="header-logo">
                 </a>

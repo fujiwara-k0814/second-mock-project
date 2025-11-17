@@ -17,11 +17,15 @@
         <a href="{{ Auth::guard('web')->check() 
             ? '/stamp_correction_request/list?tab=pending' 
             : '/admin/stamp_correction_request/list?tab=pending' }}" 
-            class="pending {{ request('tab') === 'approved' ? '' : 'active' }}">承認待ち</a>
+            class="pending {{ request('tab') === 'approved' ? '' : 'active' }}">
+            承認待ち
+        </a>
         <a href="{{ Auth::guard('web')->check() 
             ? '/stamp_correction_request/list?tab=approved' 
             : '/admin/stamp_correction_request/list?tab=approved' }}" 
-            class="approved {{ request('tab') === 'approved' ? 'active' : '' }}">承認済み</a>
+            class="approved {{ request('tab') === 'approved' ? 'active' : '' }}">
+            承認済み
+        </a>
     </div>
     <table class="application-table">
         <tr class="header-row">
@@ -32,21 +36,29 @@
             <th class="table-header">申請日時</th>
             <th class="table-header">詳細</th>
         </tr>
-        @foreach ($attendances as $attendance)
-            @foreach ($attendance->amendmentApplications as $application)
-                <tr class="data-row">
-                    <td class="table-data table-data-status">{{ $application->approvalStatus->name }}</td>
-                    <td class="table-data">{{ $attendance->user->name }}</td>
-                    <td class="table-data table-data-date">{{ $attendance->date->isoFormat('YYYY/MM/DD') }}</td>
-                    <td class="table-data">{{ $application->comment }}</td>
-                    <td class="table-data table-data-application">{{ $application->created_at->isoFormat('YYYY/MM/DD') }}</td>
-                    <td class="table-data">
-                        <a href="{{ Auth::guard('web')->check() 
-                            ? "/attendance/detail/$application->attendance_id" 
-                            : "/admin/stamp_correction_request/approve/$application->id" }}" class="application-detail__link">詳細</a>
-                    </td>
-                </tr>
-            @endforeach
+        @foreach ($applications as $application)
+            <tr class="data-row">
+                <td class="table-data table-data-status">
+                    {{ $application->approvalStatus->name }}
+                </td>
+                <td class="table-data">
+                    {{ $application->attendance->user->name }}
+                </td>
+                <td class="table-data table-data-date">
+                    {{ $application->date->isoFormat('YYYY/MM/DD') }}
+                </td>
+                <td class="table-data">
+                    {{ $application->comment }}
+                </td>
+                <td class="table-data table-data-application">
+                    {{ $application->created_at->isoFormat('YYYY/MM/DD') }}
+                </td>
+                <td class="table-data">
+                    <a href="{{ Auth::guard('web')->check() 
+                        ? "/attendance/detail/$application->attendance_id" 
+                        : "/admin/stamp_correction_request/approve/$application->id" }}" class="application-detail__link">詳細</a>
+                </td>
+            </tr>
         @endforeach
     </table>
 </div>

@@ -10,8 +10,12 @@
 <form action="/attendance" method="post" class="stamp-form">
     @csrf
     <p class="work-status">{{ $status->label() }}</p>
-    <time id="current-date" datetime="" class="current-date">--</time>
-    <time id="current-time" datetime="" class="current-time">--:--</time>
+    <time class="current-date">
+        {{ $dateTime->locale('ja')->isoFormat('YYYY年MM月DD日(ddd)') }}
+    </time>
+    <time class="current-time">
+        {{ $dateTime->locale('ja')->isoFormat('HH:mm') }}
+    </time>
     @switch($status)
         @case(\App\Enums\AttendanceStatus::WORKING)
             <div class="stamp__button-wrapper">
@@ -38,5 +42,4 @@
     @endswitch
     <input type="hidden" name="status" value="{{ $status->value }}">
 </form>
-<script src="{{ asset('js/datetime.js') }}"></script>
 @endsection

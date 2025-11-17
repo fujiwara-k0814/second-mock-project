@@ -24,6 +24,7 @@ class AmendmentApplicationFactory extends Factory
         return [
             'attendance_id' => Attendance::factory(),
             'approval_status_id' => $faker->numberBetween(1, 2),
+            'date' => $date,
             'clock_in' => Carbon::parse($date->format('Y-m-d') . ' ' . $startTime),
             'clock_out' => Carbon::parse($date->format('Y-m-d') . ' ' . $endTime),
             'comment' => $faker->boolean() ? '体調不良のため' : null,

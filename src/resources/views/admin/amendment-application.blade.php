@@ -19,16 +19,20 @@
         <tr class="date-row">
             <th>日付</th>
             <td>
-                <span>{{ $amendment->attendance->date->locale('ja')->isoFormat('YYYY年') }}</span>
-                <span>{{ $amendment->attendance->date->locale('ja')->isoFormat('M月D日') }}</span>
+                <span>
+                    {{ $amendment->date->locale('ja')->isoFormat('YYYY年') }}
+                </span>
+                <span>
+                    {{ $amendment->date->locale('ja')->isoFormat('M月D日') }}
+                </span>
             </td>
         </tr>
         <tr class="clock-row">
             <th>出勤・退勤</th>
             <td>
-                {{ $amendment->clock_in->Format('H:i') }}
-                <span>～</span>
-                {{ $amendment->clock_out->Format('H:i') }}
+                {{ $amendment->clock_in?->Format('H:i') }}
+                <span>{{ $amendment->clock_in ? '～' : '' }}</span>
+                {{ $amendment->clock_out?->Format('H:i') }}
             </td>
         </tr>
         @forelse ($breaks as $index => $break)

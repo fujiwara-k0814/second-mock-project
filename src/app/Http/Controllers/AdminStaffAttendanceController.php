@@ -24,9 +24,10 @@ class AdminStaffAttendanceController extends Controller
             $month ?? Carbon::now()->month,
             1,   //1日を起点とさせる為'1'を指定
         )
-            ->startOfMonth();
+        ->startOfMonth();
         $prev = $targetDate->copy()->subMonth();
         $next = $targetDate->copy()->addMonth();
+        
         $attendances = $user->attendances()
             ->with('attendanceBreaks')
             ->whereBetween('date', [
@@ -36,27 +37,9 @@ class AdminStaffAttendanceController extends Controller
             ->orderBy('date')
             ->get();
 
-        //総勤務、総休憩、総稼働プロパティ追加(終了時間が無いなどの場合は'null')
-        $attendances->each(function ($attendance) {
-            $attendance->total_work_seconds = (
-                $attendance->clock_in && $attendance->clock_out
-            )
-                ? $attendance->clock_out->diffInSeconds($attendance->clock_in)
-                : null;
-
-            $attendance->total_break_seconds = $attendance->attendanceBreaks
-                ->sum(function ($break) {
-                    return ($break->break_start && $break->break_end)
-                        ? $break->break_end->diffInSeconds($break->break_start)
-                        : null;
-                });
-
-            $attendance->actual_work_seconds = (
-                $attendance->total_work_seconds && $attendance->total_break_seconds
-            )
-                ? max(0, $attendance->total_work_seconds - $attendance->total_break_seconds)
-                : null;
-        });
+        //プロパティ追加
+        //総勤務 → 'total_work_seconds' 総休憩 → 'total_break_seconds' 総稼働 → 'actual_work_seconds'
+        app(AttendanceSummaryService::class)->summarize($attendances);
 
         return view('shared.staff-attendance-index', compact(
             'attendances',

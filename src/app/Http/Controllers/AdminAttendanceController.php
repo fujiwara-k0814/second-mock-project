@@ -14,9 +14,13 @@ use App\Services\AmendmentApplicationProcessor;
 
 class AdminAttendanceController extends Controller
 {
-    public function index($date = null)
+    public function index($year = null, $month = null, $day = null)
     {
-        $targetDate = $date ? Carbon::create($date) : Carbon::now();
+        $targetDate = Carbon::createFromDate(
+            $year ?? Carbon::now()->year,   //'now()->**'省略時に現在年月を表示
+            $month ?? Carbon::now()->month,
+            $day ?? Carbon::now()->day,
+        );
         $prev = $targetDate->copy()->subDay();
         $next = $targetDate->copy()->addDay();
 
@@ -25,29 +29,16 @@ class AdminAttendanceController extends Controller
             ->orderBy('created_at')
             ->get();
 
-        //総勤務、総休憩、総稼働プロパティ追加(終了時間が無いなどの場合は'null')
-        $attendances->each(function ($attendance) {
-            $attendance->total_work_seconds = (
-                $attendance->clock_in && $attendance->clock_out
-            )
-                ? $attendance->clock_out->diffInSeconds($attendance->clock_in)
-                : null;
+        //プロパティ追加
+        //総勤務 → 'total_work_seconds' 総休憩 → 'total_break_seconds' 総稼働 → 'actual_work_seconds'
+        app(AttendanceSummaryService::class)->summarize($attendances);
 
-            $attendance->total_break_seconds = $attendance->attendanceBreaks
-                ->sum(function ($break) {
-                    return ($break->break_start && $break->break_end)
-                        ? $break->break_end->diffInSeconds($break->break_start)
-                        : null;
-                });
-
-            $attendance->actual_work_seconds = (
-                $attendance->total_work_seconds && $attendance->total_break_seconds
-            )
-                ? max(0, $attendance->total_work_seconds - $attendance->total_break_seconds)
-                : null;
-        });
-
-        return view('admin.attendance-index', compact('attendances', 'targetDate', 'prev', 'next'));
+        return view('admin.attendance-index', compact(
+            'attendances', 
+            'targetDate', 
+            'prev', 
+            'next'
+        ));
     }
 
     public function edit($attendance_id)
@@ -59,24 +50,32 @@ class AdminAttendanceController extends Controller
             'latestAmendmentApplication.approvalStatus',
             'latestAmendmentApplication.amendmentApplicationBreaks'
         ])->find($attendance_id);
+
         $breaks = AttendanceBreak::where('attendance_id', $attendance_id)
             ->orderBy('break_start')->get();
+            
         $attendanceId = $attendance_id;
         $user = $displayAttendance->user;
-        $date = $displayAttendance->date;
-        $statusCode = $displayAttendance->latestAmendmentApplication?->approvalStatus->code;
+        $statusCode = $displayAttendance
+            ->latestAmendmentApplication
+            ?->approvalStatus
+            ->code;
 
+        //ステータスが承認待ちの場合のみ修正申請内容を'displayAttendance'に反映
         if ($statusCode === 'pending') {
             $displayAttendance = $displayAttendance->latestAmendmentApplication;
-            $breaks = AmendmentApplicationBreak::where('amendment_application_id', $displayAttendance->id)->orderBy('break_start')->get();
+            $breaks = AmendmentApplicationBreak::where(
+                'amendment_application_id', $displayAttendance->id
+            )
+            ->orderBy('break_start')
+            ->get();
         }
-
+        
         return view('shared.attendance-detail', compact(
             'displayAttendance',
             'attendanceId',
             'breaks',
             'user',
-            'date',
             'statusCode',
         ));
     }
@@ -85,57 +84,34 @@ class AdminAttendanceController extends Controller
     {
         $attendance = Attendance::find($attendance_id);
         $date = $attendance->date;
-        $amendmentApplicationBreaks = [];
 
-        $application['attendance_id'] = $attendance_id;
-        $application['approval_status_id'] = ApplicationStatus::APPROVED->value;
-        $application['comment'] = $request->input('comment');
-        if ($request->input('clock_in')) {
-            $application['clock_in'] = Carbon::parse(
-                $date->format('Y-m-d') . ' ' . $request->input('clock_in')
-            );
-        } else {
-            $application['clock_in'] = null;
-        }
-        if ($request->input('clock_out')) {
-            $application['clock_out'] = Carbon::parse(
-                $date->format('Y-m-d') . ' ' . $request->input('clock_out')
-            );
-        } else {
-            $application['clock_out'] = null;
-        }
-        
-        $amendmentApplication = AmendmentApplication::create($application);
+        $application = AmendmentApplication::create([
+            'attendance_id' => $attendance_id,
+            'approval_status_id' => ApplicationStatus::APPROVED->value,
+            'date' => $date,
+            'comment' => $request->input('comment'),
+            'clock_in' => $request->input('clock_in') 
+                ? Carbon::parse($date->format('Y-m-d') . ' ' . $request->input('clock_in')) 
+                : null,
+            'clock_out' => $request->input('clock_out') 
+                ? Carbon::parse($date->format('Y-m-d') . ' ' . $request->input('clock_out')) 
+                : null,
+        ]);
 
         foreach ($request->input('break_start', []) as $index => $start) {
             $breakEnds = $request->input('break_end', []);
             $end = $breakEnds[$index] ?? null;
             if ($start && $end) {
-                $break['break_start'] = Carbon::parse(
-                    $date->format('Y-m-d') . ' ' . $start
-                );
-                $break['break_end'] = Carbon::parse(
-                    $date->format('Y-m-d') . ' ' . $end
-                );
-                $break['amendment_application_id'] = $amendmentApplication->id;
-                $amendmentApplicationBreaks[] = AmendmentApplicationBreak::create($break);
+                AmendmentApplicationBreak::create([
+                    'amendment_application_id' => $application->id,
+                    'break_start' => Carbon::parse($date->format('Y-m-d') . ' ' . $start),
+                    'break_end' => Carbon::parse($date->format('Y-m-d') . ' ' . $end),
+                ]);
             }
         }
 
-        //レコード更新
-        $attendance->clock_in = $amendmentApplication->clock_in;
-        $attendance->clock_out = $amendmentApplication->clock_out;
-        $attendance->comment = $amendmentApplication->comment;
-        $attendance->save();
-
-        $attendance->attendanceBreaks()->delete();
-        foreach ($amendmentApplicationBreaks as $amendmentApplicationBreak) {
-            AttendanceBreak::create([
-                'attendance_id' => $attendance->id,
-                'break_start' => $amendmentApplicationBreak->break_start,
-                'break_end' => $amendmentApplicationBreak->break_end,
-            ]);
-        }
+        //修正申請内容を勤怠レコード、休憩レコードへ反映
+        app(AmendmentApplicationProcessor::class)->applyToAttendance($application);
 
         return redirect("/admin/attendance/$attendance_id");
     }

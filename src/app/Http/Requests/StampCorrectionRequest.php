@@ -25,6 +25,7 @@ class StampCorrectionRequest extends FormRequest
     {
         return [
             'clock_in' => [
+                'nullable',
                 'before:clock_out',
                 'required_with:clock_out',
                 'required_with:break_start.*',
@@ -43,6 +44,7 @@ class StampCorrectionRequest extends FormRequest
                 'required_with:break_start.*',
             ],
             'clock_out' => [
+                'nullable',
                 'required_with:clock_in',
             ],
             'comment' => ['required'],

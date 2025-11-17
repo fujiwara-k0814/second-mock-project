@@ -11,12 +11,17 @@
 @endsection
 
 @section('content')
-<form action="{{ Route::currentRouteName('login') ? asset('/login') : asset('/admin/login') }}" 
+<form action="{{ Route::currentRouteName('login') 
+    ? asset('/login') 
+    : asset('/admin/login') }}" 
     method="post" class="login-form">
     @csrf
-    <h1 class="login__title">{{ Route::currentRouteName('login') ? 'ログイン' : '管理者ログイン' }}</h1>
+    <h1 class="login__title">
+        {{ Route::currentRouteName('login') ? 'ログイン' : '管理者ログイン' }}
+    </h1>
     <label for="email" class="login-form__label">メールアドレス</label>
-    <input type="text" name="email" id="email" class="login-form__input" value="{{ old('email') }}">
+    <input type="text" name="email" id="email" class="login-form__input" 
+        value="{{ old('email') }}">
     <div class="login-form__error">
         @error('email')
             {{ $message }}

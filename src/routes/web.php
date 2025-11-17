@@ -54,7 +54,7 @@ Route::prefix('admin')->group(function () {
     Route::post('/login', [AdminAuthController::class, 'login']);
     Route::middleware('auth:admin')->group(function () {
         Route::post('/logout', [AdminAuthController::class, 'logout']);
-        Route::get('/attendance/list/{date?}', [AdminAttendanceController::class, 'index']);
+        Route::get('/attendance/list/{year?}/{month?}/{day?}', [AdminAttendanceController::class, 'index']);
         Route::get('/attendance/{id}', [AdminAttendanceController::class, 'edit']);
         Route::post('/attendance/{id}', [AdminAttendanceController::class, 'correction']);
         Route::get('/staff/list', [AdminStaffAttendanceController::class, 'index']);

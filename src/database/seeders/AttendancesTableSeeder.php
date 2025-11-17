@@ -23,14 +23,12 @@ class AttendancesTableSeeder extends Seeder
     {
         $faker = Factory::create();
     
-        $targetUserEmails = ['user1@example.com', 'user2@example.com'];
-        // $users = User::whereIn('email', $targetUserEmails)->get();
         $users = User::all();
 
         $startDate = Carbon::now()->subMonths(2)->startOfMonth();
         $endDate = Carbon::now()->addMonths(2)->endOfMonth();
         
-        //テストユーザーのみ前後2か月分の勤怠レコードを作成
+        //前後2か月分の勤怠レコードを作成
         foreach ($users as $user) {
             foreach ($startDate->toPeriod($endDate) as $date) {
                 //20%の確率で修正申請
@@ -84,6 +82,7 @@ class AttendancesTableSeeder extends Seeder
                     $amendmentApplication = AmendmentApplication::factory()->create([
                         'attendance_id' => $attendance->id,
                         'approval_status_id' => $approvalStatus,
+                        'date' => $date,
                         'clock_in' => $date->copy()->setTime(rand(8, 10), 0),
                         'clock_out' => $date->copy()->setTime(rand(17, 19), 0),
                         'comment' => $faker->randomElement(['電車遅延のため', '体調不良のため',])
@@ -114,7 +113,9 @@ class AttendancesTableSeeder extends Seeder
                         $attendance->save();
 
                         $attendance->attendanceBreaks()->delete();
-                        $amendmentApplicationBreaks = $amendmentApplication->amendmentApplicationBreaks()->get();
+                        $amendmentApplicationBreaks = $amendmentApplication
+                            ->amendmentApplicationBreaks()
+                            ->get();
                         foreach ($amendmentApplicationBreaks as $amendmentApplicationBreak) {
                             AttendanceBreak::factory()->create([
                                 'attendance_id' => $attendance->id,

@@ -19,13 +19,15 @@
     <nav class="attendance-paginate">
         <a href="{{ Auth::guard('web')->check() 
             ? "/attendance/list/$prev->year/$prev->month" 
-            : "/admin/attendance/staff/$user->id/$prev->year/$prev->month" }}" class="attendance-paginate__link">
+            : "/admin/attendance/staff/$user->id/$prev->year/$prev->month" }}" 
+            class="attendance-paginate__link">
             <span class="attendance-paginate__link arrow">← </span>前月
         </a>
         <p class="current-month">{{ $targetDate->isoFormat('YYYY/MM') }}</p>
         <a href="{{ Auth::guard('web')->check() 
             ? "/attendance/list/$next->year/$next->month" 
-            : "/admin/attendance/staff/$user->id/$next->year/$next->month" }}" class="attendance-paginate__link">
+            : "/admin/attendance/staff/$user->id/$next->year/$next->month" }}" 
+            class="attendance-paginate__link">
             翌月<span class="attendance-paginate__link arrow"> →</span>
         </a>
     </nav>
@@ -40,21 +42,50 @@
         </tr>
         @foreach ($attendances as $attendance)
             <tr class="data-row">
-                <td class="table-data table-data-date">{{ $attendance->date->locale('ja')->isoFormat('MM/DD(ddd)') }}</td>
-                <td class="table-data">{{ $attendance->clock_in ? $attendance->clock_in->format('H:i') : '' }}</td>
-                <td class="table-data">{{ $attendance->clock_out ? $attendance->clock_out->format('H:i') : '' }}</td>
-                <td class="table-data">{{ $attendance->total_break_seconds ? sprintf('%02d:%02d', floor($attendance->total_break_seconds / 3600), ($attendance->total_break_seconds % 3600) / 60) : '' }}</td>
-                <td class="table-data">{{ $attendance->actual_work_seconds ? sprintf('%02d:%02d', floor($attendance->actual_work_seconds / 3600), ($attendance->actual_work_seconds % 3600) / 60) : '' }}</td>
+                <td class="table-data table-data-date">
+                    {{ $attendance->date->locale('ja')->isoFormat('MM/DD(ddd)') }}
+                </td>
+                <td class="table-data">
+                    {{ $attendance->clock_in ? $attendance->clock_in->format('H:i') : '' }}
+                </td>
+                <td class="table-data">
+                    {{ $attendance->clock_out ? $attendance->clock_out->format('H:i') : '' }}
+                </td>
+                <td class="table-data">
+                    {{ 
+                        $attendance->total_break_seconds 
+                            ? sprintf(
+                                '%d:%02d', 
+                                floor($attendance->total_break_seconds / 3600), 
+                                ($attendance->total_break_seconds % 3600) / 60
+                            ) 
+                            : '' 
+                    }}
+                </td>
+                <td class="table-data">
+                    {{ 
+                        $attendance->actual_work_seconds 
+                            ? sprintf(
+                                '%d:%02d', 
+                                floor($attendance->actual_work_seconds / 3600), 
+                                ($attendance->actual_work_seconds % 3600) / 60
+                            ) 
+                            : '' 
+                    }}
+                </td>
                 <td class="table-data table-data-detail">
                     <a href="{{ Auth::guard('web')->check() 
                         ? "/attendance/detail/$attendance->id" 
-                        : "/admin/attendance/$attendance->id" }}" class="attendance-detail__link">詳細</a>
+                        : "/admin/attendance/$attendance->id" }}" class="attendance-detail__link">
+                        詳細
+                    </a>
                 </td>
             </tr>
         @endforeach
     </table>
     @if (Auth::guard('admin')->check())
-        <form action="/admin/attendance/staff/{{ $user->id }}/{{ $targetDate->year }}/{{ $targetDate->month }}/export" method="get" class="export-form">
+        <form action="/admin/attendance/staff/{{ $user->id }}/{{ $targetDate->year }}/{{ $targetDate->month }}/export" 
+            method="get" class="export-form">
             <button type="submit" class="export__button">CSV出力</button>
         </form>
     @endif

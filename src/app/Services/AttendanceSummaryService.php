@@ -12,7 +12,9 @@ class AttendanceSummaryService
             //総勤務時間
             $attendance->total_work_seconds = (
                 $attendance->clock_in && $attendance->clock_out
-            ) ? $attendance->clock_out->diffInSeconds($attendance->clock_in) : null;
+            ) 
+            ? $attendance->clock_out->diffInSeconds($attendance->clock_in) 
+            : null;
             
             //総休憩時間
             $attendance->total_break_seconds = $attendance->attendanceBreaks->sum(function ($break) {
@@ -23,9 +25,10 @@ class AttendanceSummaryService
 
             //総稼働時間
             $attendance->actual_work_seconds = (
-                $attendance->total_work_seconds 
-                && $attendance->total_break_seconds 
-            ) ? max(0, $attendance->total_work_seconds - $attendance->total_break_seconds) : null;
+                $attendance->total_work_seconds && $attendance->total_break_seconds 
+            ) 
+            ? max(0, $attendance->total_work_seconds - $attendance->total_break_seconds) 
+            : null;
         });
     }
 }

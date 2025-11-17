@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\AmendmentApplication;
+use App\Enums\ApplicationStatus;
 
 class UserCorrectionRequestController extends Controller
 {
@@ -12,23 +12,28 @@ class UserCorrectionRequestController extends Controller
     {
         /** @var \App\Models\User $user */
         $user = Auth::guard('web')->user();
+        $attendanceIds = $user->attendances()->pluck('id');
 
         if (request('tab') === 'approved') {
-            $attendances = $user->attendances()
-                ->with('amendmentApplications.approvalStatus')
-                ->whereHas('amendmentApplications.approvalStatus', function ($q) {
-                    $q->whereNotIn('code', ['pending']);
-                })
-                ->get();
+            $applications = AmendmentApplication::with(
+                'attendance.user',
+                'approvalStatus'
+            )
+            ->where('approval_status_id', ApplicationStatus::APPROVED->value)
+            ->whereIn('attendance_id', $attendanceIds)
+            ->orderBy('date')
+            ->get();
         } else {
-            $attendances = $user->attendances()
-                ->with('amendmentApplications.approvalStatus')
-                ->whereHas('amendmentApplications.approvalStatus', function ($q) {
-                    $q->whereNotIn('code', ['approved']);
-                })
-                ->get();
+            $applications = AmendmentApplication::with(
+                'attendance.user',
+                'approvalStatus'
+            )
+            ->where('approval_status_id', ApplicationStatus::PENDING->value)
+            ->whereIn('attendance_id', $attendanceIds)
+            ->orderBy('date')
+            ->get();
         }
 
-        return view('shared.application-index', compact('attendances'));
+        return view('shared.application-index', compact('applications'));
     }
 }

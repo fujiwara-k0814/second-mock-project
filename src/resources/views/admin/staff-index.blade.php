@@ -20,7 +20,8 @@
                 <td class="table-data table-data-name">{{ $user->name }}</td>
                 <td class="table-data">{{ $user->email }}</td>
                 <td class="table-data table-data-month">
-                    <a href="/admin/attendance/staff/{{ $user->id }}" class="staff-detail__link">詳細</a>
+                    <a href="/admin/attendance/staff/{{ $user->id }}" 
+                        class="staff-detail__link">詳細</a>
                 </td>
             </tr>
         @endforeach

@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use App\Services\AttendanceSummaryService;
 
 class StaffAttendanceExportController extends Controller
 {
@@ -18,7 +19,8 @@ class StaffAttendanceExportController extends Controller
             $month ?? Carbon::now()->month,
             1,   //1日を起点とさせる為'1'を指定
         )
-            ->startOfMonth();
+        ->startOfMonth();
+
         $attendances = $user->attendances()
             ->with('attendanceBreaks')
             ->whereBetween('date', [
@@ -28,29 +30,18 @@ class StaffAttendanceExportController extends Controller
             ->orderBy('date')
             ->get();
 
-        //総勤務、総休憩、総稼働プロパティ追加(終了時間が無いなどの場合は'null')
-        $attendances->each(function ($attendance) {
-            $attendance->total_work_seconds = (
-                $attendance->clock_in && $attendance->clock_out
-            )
-                ? $attendance->clock_out->diffInSeconds($attendance->clock_in)
-                : null;
+        //プロパティ追加
+        //総勤務 → 'total_work_seconds' 総休憩 → 'total_break_seconds' 総稼働 → 'actual_work_seconds'
+        app(AttendanceSummaryService::class)->summarize($attendances);
 
-            $attendance->total_break_seconds = $attendance->attendanceBreaks
-                ->sum(function ($break) {
-                    return ($break->break_start && $break->break_end)
-                        ? $break->break_end->diffInSeconds($break->break_start)
-                        : null;
-                });
-
-            $attendance->actual_work_seconds = (
-                $attendance->total_work_seconds && $attendance->total_break_seconds
-            )
-                ? max(0, $attendance->total_work_seconds - $attendance->total_break_seconds)
-                : null;
-        });
-
-        $filename = 'attendances_' . $targetDate->year . $targetDate->month . '_userid' .$user_id .  '_' . now()->format('Ymd_His') . '.csv';
+        $filename = 'attendances_' . 
+            $targetDate->year . 
+            $targetDate->month . 
+            '_userid' .$user_id .  
+            '_' . 
+            now()->format('Ymd_His') . 
+            '.csv';
+        
         $csvContent = $this->generateAttendanceCsv($attendances, $user);
 
         if ($request->destination === 'storage') {
@@ -83,8 +74,20 @@ class StaffAttendanceExportController extends Controller
                 $attendance->date->locale('ja')->isoFormat('MM/DD(ddd)'),
                 $attendance->clock_in ? $attendance->clock_in->format('H:i') : '',
                 $attendance->clock_out ? $attendance->clock_out->format('H:i') : '',
-                $attendance->total_break_seconds ? sprintf('%02d:%02d', floor($attendance->total_break_seconds / 3600), ($attendance->total_break_seconds % 3600) / 60) : '',
-                $attendance->actual_work_seconds ? sprintf('%02d:%02d', floor($attendance->actual_work_seconds / 3600), ($attendance->actual_work_seconds % 3600) / 60) : '',
+                $attendance->total_break_seconds 
+                    ? sprintf(
+                        '%02d:%02d', 
+                        floor($attendance->total_break_seconds / 3600), 
+                        ($attendance->total_break_seconds % 3600) / 60
+                    ) 
+                    : '',
+                $attendance->actual_work_seconds 
+                    ? sprintf(
+                        '%02d:%02d', 
+                        floor($attendance->actual_work_seconds / 3600), 
+                        ($attendance->actual_work_seconds % 3600) / 60
+                    ) 
+                    : '',
                 $attendance->created_at,
                 $attendance->updated_at,
             ]);

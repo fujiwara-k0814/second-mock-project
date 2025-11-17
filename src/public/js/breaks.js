@@ -2,7 +2,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     updateBreakRows();
 
-    // Laravelのold()により追加された休憩行を復元
+    //old()により追加された'break-row'を復元
     const starts = window.oldBreakStarts ?? [];
     const ends = window.oldBreakEnds ?? [];
     const errors = window.laravelErrors ?? {};
@@ -38,7 +38,7 @@ function isRowFull(row) {
     return Array.from(inputs).every(input => input.value); //両方満の場合'true'
 }
 
-//休憩項目の更新
+//'break-row'の更新
 function updateBreakRows() {
     const rows = document.querySelectorAll('.break-row');
     let firstEmptyIndex = null;
@@ -59,14 +59,12 @@ function updateBreakRows() {
         });
     }
 
-    //空欄がなければ1つ項目を追加
     const currentRows = document.querySelectorAll('.break-row');
     const lastRow = currentRows[currentRows.length - 1]; //indexに合わせる為'-1'
-
-    if (!isRowEmpty(lastRow) || lastRow.querySelector('input').disabled) {
+    //空欄項目がなければ1つ項目を追加
+    if (!isRowEmpty(lastRow)) {
         const index = currentRows.length;
-        const disableClass = statusCode === 'pending' ? 'disable' : '';
-        const isDisabled = statusCode === 'pending' ? 'disabled' : '';
+        
         const breakStartKey = `break_start.${index}`;
         const breakEndKey = `break_end.${index}`;
         const breakStartError = window.laravelErrors?.[breakStartKey]?.[0] ?? '';
@@ -82,10 +80,10 @@ function updateBreakRows() {
     }
 }
 
-//休憩行の追加
+//'break-row'の追加
 function addBreakRow(index, startValue = '', endValue = '', startError = '', endError = '') {
     const disableClass = statusCode === 'pending' ? 'disable' : '';
-    const isDisabled = statusCode === 'pending' ? 'disabled' : '';
+    const isReadonly = statusCode === 'pending' ? 'disabled' : '';
 
     const newRow = document.createElement('tr');
     newRow.classList.add('break-row');
@@ -96,13 +94,13 @@ function addBreakRow(index, startValue = '', endValue = '', startError = '', end
         <td>
             <div class="wrapper">
                 <input type="time" name="break_start[${index}]" id="break[${index}]"
-                    class="detail-form__input ${disableClass}" ${isDisabled} value="${startValue}">
+                    class="detail-form__input ${disableClass}" ${isReadonly} value="${startValue}">
                 <div class="detail-form__error">${startError}</div>
             </div>
             <span>～</span>
             <div class="wrapper">
                 <input type="time" name="break_end[${index}]" id="break[${index}]"
-                    class="detail-form__input ${disableClass}" ${isDisabled} value="${endValue}">
+                    class="detail-form__input ${disableClass}" ${isReadonly} value="${endValue}">
                 <div class="detail-form__error">${endError}</div>
             </div>
         </td>

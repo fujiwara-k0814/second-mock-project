@@ -32,8 +32,5 @@ class UsersTableSeeder extends Seeder
             'password' => Hash::make('password'),
         ];
         User::create($param);
-
-        //ビュー確認の為10人ダミー作成
-        User::factory()->count(10)->create();
     }
 }

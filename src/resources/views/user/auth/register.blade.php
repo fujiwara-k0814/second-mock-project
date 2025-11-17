@@ -11,14 +11,16 @@
     @csrf
     <h1 class="register__title">会員登録</h1>
     <label for="name" class="register-form__label">名前</label>
-    <input type="text" name="name" id="name" class="register-form__input" value="{{ old('name') }}">
+    <input type="text" name="name" id="name" class="register-form__input" 
+        value="{{ old('name') }}">
     <div class="register-form__error">
         @error('name')
             {{ $message }}
         @enderror
     </div>
     <label for="email" class="register-form__label">メールアドレス</label>
-    <input type="text" name="email" id="email" class="register-form__input" value="{{ old('email') }}">
+    <input type="text" name="email" id="email" class="register-form__input" 
+        value="{{ old('email') }}">
     <div class="register-form__error">
         @error('email')
             {{ $message }}
@@ -32,7 +34,8 @@
         @enderror
     </div>
     <label for="password_confirmation" class="register-form__label">パスワード確認</label>
-    <input type="text" name="password_confirmation" id="password_confirmation" class="register-form__input">
+    <input type="text" name="password_confirmation" id="password_confirmation" 
+        class="register-form__input">
     <div class="register-form__error">
         @error('password_confirmation')
             {{ $message }}
