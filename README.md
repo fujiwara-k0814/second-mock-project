@@ -96,14 +96,27 @@ MAIL_FROM_NAME="${APP_NAME}"
   
   
 ## テストアカウント  
-### メール認証済  
+  
+### ユーザー  
+  
+・メール認証済  
 name : 認証済ユーザー  
 email : user1@example.com  
 password : password  
   
-### メール未認証  
+・メール未認証  
 name : 未認証ユーザー  
 email : user2@example.com  
+password : password  
+  
+### 管理者  
+  
+・管理者1  
+email : admin1@example.com  
+password : password  
+  
+・管理者1  
+email : admin2@example.com  
 password : password  
   
 ### テストコマンド  
