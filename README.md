@@ -40,15 +40,19 @@
  ``` bash
  php artisan key:generate
  ```
- 6. テストファイルのキーを生成  
+ 6. .env.testing.exampleファイルから.env.testingファイルを作成  
+ ``` bash
+ cp .env.testing.example .env.testing
+ ```
+ 7. テストファイルのキーを生成  
  ``` bash
  php artisan key:generate --env=testing
  ```
- 7. マイグレーションの実行  
+ 8. マイグレーションの実行  
  ``` bash
  php artisan migrate
  ```
- 8. シーディングの実行  
+ 9. シーディングの実行  
  ``` bash
  php artisan db:seed
  ```
@@ -81,10 +85,10 @@ MAIL_FROM_NAME="${APP_NAME}"
   
 ## URL  
 ・開発環境(ユーザー)：http://localhost/  
-    例：ログイン画面 http://localhost/login  
+例：ログイン画面 http://localhost/login  
   
 ・開発環境(管理者)：http://localhost/admin/  
-    例：ログイン画面 http://localhost/admin/login  
+例：ログイン画面 http://localhost/admin/login  
   
 ・phpMyAdmin：http://localhost:8080/  
 ・MailHog：http://localhost:8025/  
@@ -108,4 +112,4 @@ php artisan test tests/Feature
   
   
 ## コーチと合意を取った内容  
-・勤怠登録画面での日付、時刻はリアルタイムではなくて良い
+・勤怠登録画面での日付、時刻はリアルタイムでなくて良い
