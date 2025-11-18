@@ -56,11 +56,15 @@ Route::prefix('admin')->group(function () {
     Route::post('/login', [AdminAuthController::class, 'login']);
     Route::middleware('auth:admin')->group(function () {
         Route::post('/logout', [AdminAuthController::class, 'logout']);
-        Route::get('/attendance/list/{year?}/{month?}/{day?}', [AdminAttendanceController::class, 'index']);
+        Route::get('/attendance/list/{year?}/{month?}/{day?}', [
+            AdminAttendanceController::class, 'index'
+        ]);
         Route::get('/attendance/{id}', [AdminAttendanceController::class, 'edit']);
         Route::post('/attendance/{id}', [AdminAttendanceController::class, 'correction']);
         Route::get('/staff/list', [AdminStaffAttendanceController::class, 'index']);
-        Route::get('/attendance/staff/{id}/{year?}/{month?}', [AdminStaffAttendanceController::class, 'show']);
+        Route::get('/attendance/staff/{id}/{year?}/{month?}', [
+            AdminStaffAttendanceController::class, 'show'
+        ]);
         Route::get('/attendance/staff/{id}/{year?}/{month?}/export', [
             StaffAttendanceExportController::class, 'export'
         ]);
@@ -70,7 +74,11 @@ Route::prefix('admin')->group(function () {
 //管理者：申請関連
 Route::middleware(['auth:admin'])->prefix('admin/stamp_correction_request')->group(function () {
     Route::get('list', [AdminCorrectionRequestController::class, 'index']);
-    Route::get('approve/{attendance_correct_request_id}', [AdminCorrectionRequestController::class, 'edit']);
-    Route::post('approve/{attendance_correct_request_id}', [AdminCorrectionRequestController::class, 'update']);
+    Route::get('approve/{attendance_correct_request_id}', [
+        AdminCorrectionRequestController::class, 'edit'
+    ]);
+    Route::post('approve/{attendance_correct_request_id}', [
+        AdminCorrectionRequestController::class, 'update'
+    ]);
 });
 

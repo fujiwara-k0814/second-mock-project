@@ -115,7 +115,7 @@ password : password
 email : admin1@example.com  
 password : password  
   
-・管理者1  
+・管理者2  
 email : admin2@example.com  
 password : password  
   
@@ -125,5 +125,5 @@ php artisan test tests/Feature
 ```
   
   
-## コーチと合意を取った内容  
-・勤怠登録画面での日付、時刻はリアルタイムでなくて良い
+## コーチとの合意内容  
+・勤怠登録画面での日付、時刻はリアルタイム表示をしなくても良い
