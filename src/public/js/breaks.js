@@ -32,6 +32,12 @@ function isRowEmpty(row) {
     return Array.from(inputs).every(input => !input.value); //両方空の場合'true'
 }
 
+//入力値disabled判定
+function isRowDisabled(row) {
+    const inputs = row.querySelectorAll('input[type="time"]'); //開始・終了を取得
+    return Array.from(inputs).every(input => input.disabled); //両方disabledの場合'true'
+}
+
 //入力値満判定
 function isRowFull(row) {
     const inputs = row.querySelectorAll('input[type="time"]'); //開始・終了を取得
@@ -40,29 +46,10 @@ function isRowFull(row) {
 
 //'break-row'の更新
 function updateBreakRows() {
-    const rows = document.querySelectorAll('.break-row');
-    let firstEmptyIndex = null;
-
-    //'break-row'の最初の空欄項目を記憶
-    rows.forEach((row, index) => {
-        if (firstEmptyIndex === null && isRowEmpty(row)) {
-            firstEmptyIndex = index;
-        }
-    });
-
-    //最初の空欄項目より後の空欄項目を削除
-    if (firstEmptyIndex !== null) {
-        rows.forEach((row, index) => {
-            if (index > firstEmptyIndex) {
-                row.remove();
-            }
-        });
-    }
-
+    //空欄項目がなければ1つ項目を追加
     const currentRows = document.querySelectorAll('.break-row');
     const lastRow = currentRows[currentRows.length - 1]; //indexに合わせる為'-1'
-    //空欄項目がなければ1つ項目を追加
-    if (!isRowEmpty(lastRow)) {
+    if (!isRowEmpty(lastRow) && !isRowDisabled(lastRow)) {
         const index = currentRows.length;
         
         const breakStartKey = `break_start.${index}`;
@@ -78,13 +65,30 @@ function updateBreakRows() {
 
         addBreakRow(index, breakStartValue, breakEndValue, breakStartError, breakEndError);
     }
+
+    //'break-row'の最初の空欄項目を記憶
+    const rows = document.querySelectorAll('.break-row');
+    let firstEmptyIndex = null;
+    rows.forEach((row, index) => {
+        if (firstEmptyIndex === null && isRowEmpty(row)) {
+            firstEmptyIndex = index;
+        }
+    });
+    
+    //最初の空欄項目より後の空欄項目を削除
+    if (firstEmptyIndex !== null) {
+        rows.forEach((row, index) => {
+            if ((index > firstEmptyIndex) || (index == firstEmptyIndex && isRowDisabled(row))) {
+                row.remove();
+            }
+        });
+    }
 }
 
 //'break-row'の追加
 function addBreakRow(index, startValue = '', endValue = '', startError = '', endError = '') {
     const disableClass = statusCode === 'pending' ? 'disable' : '';
-    const isReadonly = statusCode === 'pending' ? 'disabled' : '';
-
+    const isDisabled = statusCode === 'pending' ? 'disabled' : '';
     const newRow = document.createElement('tr');
     newRow.classList.add('break-row');
     newRow.innerHTML = `
@@ -94,13 +98,13 @@ function addBreakRow(index, startValue = '', endValue = '', startError = '', end
         <td>
             <div class="wrapper">
                 <input type="time" name="break_start[${index}]" id="break_start_${index}"
-                    class="detail-form__input ${disableClass}" ${isReadonly} value="${startValue}">
+                    class="detail-form__input ${disableClass}" ${isDisabled} value="${startValue}">
                 <div class="detail-form__error">${startError}</div>
             </div>
             <span>～</span>
             <div class="wrapper">
                 <input type="time" name="break_end[${index}]" id="break_end_${index}"
-                    class="detail-form__input ${disableClass}" ${isReadonly} value="${endValue}">
+                    class="detail-form__input ${disableClass}" ${isDisabled} value="${endValue}">
                 <div class="detail-form__error">${endError}</div>
             </div>
         </td>
@@ -118,5 +122,4 @@ function addBreakRow(index, startValue = '', endValue = '', startError = '', end
             input.classList.toggle('time-empty', !input.value);
         });
     });
-
 }
