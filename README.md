@@ -80,7 +80,8 @@ MAIL_FROM_NAME="${APP_NAME}"
   
   
 ## ER図  
-<img width="644" height="709" alt="image" src="https://github.com/user-attachments/assets/6b62eeee-ebc2-4b37-b516-71526692f4b1" />  
+<img width="797" height="727" alt="image" src="https://github.com/user-attachments/assets/b9c92ae9-ff4a-49a6-b429-3df67320e73f" />  
+
   
   
 ## URL  
