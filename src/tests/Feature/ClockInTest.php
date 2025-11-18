@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Support\Carbon;
 use App\Enums\AttendanceStatus;
 
+//ID:6 出勤機能
 class ClockInTest extends TestCase
 {
     use RefreshDatabase;

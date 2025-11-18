@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Support\Carbon;
 use App\Models\AttendanceBreak;
 
+//ID:10 勤怠詳細情報取得機能（一般ユーザー）
 class GetUserAttendanceDetailTest extends TestCase
 {
     use RefreshDatabase;

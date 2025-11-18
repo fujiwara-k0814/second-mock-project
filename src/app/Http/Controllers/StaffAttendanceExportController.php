@@ -11,13 +11,16 @@ use App\Services\AttendanceSummaryService;
 
 class StaffAttendanceExportController extends Controller
 {
+    //ルート引数の初期値を'null'に指定
     public function export(Request $request, $user_id, $year = null, $month = null)
     {
+        //'now()->**'省略時に現在年月を表示
+        //1日を起点とさせる為'1'を指定
         $user = User::find($user_id);
         $targetDate = Carbon::createFromDate(
-            $year ?? Carbon::now()->year,   //'now()->**'省略時に現在年月を表示
+            $year ?? Carbon::now()->year,
             $month ?? Carbon::now()->month,
-            1,   //1日を起点とさせる為'1'を指定
+            1,
         )
         ->startOfMonth();
 
@@ -42,13 +45,16 @@ class StaffAttendanceExportController extends Controller
             now()->format('Ymd_His') . 
             '.csv';
         
+        //csv形式文字列生成
         $csvContent = $this->generateAttendanceCsv($attendances, $user);
 
+        //保存先がstorageの時に'storage/app/exports'に保存
         if ($request->destination === 'storage') {
             Storage::disk('local')->put("exports/{$filename}", $csvContent);
             return back();
         }
 
+        //ローカルへダウンロード
         return new StreamedResponse(function () use ($csvContent) {
             echo $csvContent;
         }, 200, [

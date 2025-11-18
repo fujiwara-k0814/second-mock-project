@@ -12,6 +12,7 @@ use Illuminate\Support\Carbon;
 use App\Models\Attendance;
 use App\Models\AttendanceBreak;
 
+//ID:12 勤怠一覧情報取得機能（管理者）
 class GetAdminAttendanceListTest extends TestCase
 {
     use RefreshDatabase;

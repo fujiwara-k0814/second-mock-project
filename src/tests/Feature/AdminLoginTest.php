@@ -6,6 +6,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use Database\Seeders\AdminsTableSeeder;
 
+//ID:3 ログイン認証機能（管理者）
 class AdminLoginTest extends TestCase
 {
     use RefreshDatabase;

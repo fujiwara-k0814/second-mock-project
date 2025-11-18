@@ -33,6 +33,7 @@ class UserAttendanceController extends Controller
             $break = null;
         }
         
+        //勤怠状態でEnumステータス取得
         if ($attendance?->clock_in) {
             if ($attendance->clock_out) {
                 $status = AttendanceStatus::FINISHED;
@@ -55,8 +56,10 @@ class UserAttendanceController extends Controller
         /** @var \App\Models\User $user */
         $user = Auth::guard('web')->user();
         $attendance = $user->attendances()->whereDate('date', Carbon::now())->first();
+        //Enum型に変換して取得
         $status = AttendanceStatus::from($request->input('status'));
 
+        //勤務状況で処理分岐
         switch ($status) {
             case AttendanceStatus::OFF:
                 if ($attendance) {
@@ -100,11 +103,15 @@ class UserAttendanceController extends Controller
     {
         /** @var \App\Models\User $user */
         $user = Auth::guard('web')->user();
+
+        //'now()->**'省略時に現在年月を表示
+        //1日を起点とさせる為'1'を指定
         $targetDate = Carbon::createFromDate(
-            $year ?? Carbon::now()->year,   //'now()->**'省略時に現在年月を表示
+            $year ?? Carbon::now()->year,
             $month ?? Carbon::now()->month, 
-            1,   //1日を起点とさせる為'1'を指定
-            )->startOfMonth();
+            1,
+        )
+        ->startOfMonth();
         $prev = $targetDate->copy()->subMonth();
         $next = $targetDate->copy()->addMonth();
 

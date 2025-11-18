@@ -31,11 +31,11 @@ class AttendancesTableSeeder extends Seeder
         //前後2か月分の勤怠レコードを作成
         foreach ($users as $user) {
             foreach ($startDate->toPeriod($endDate) as $date) {
-                //20%の確率で修正申請
+                //20%の確率、かつ、テストユーザーは本日を空欄処理 (本日空欄処理はUIで手動確認の為)
                 $breakCheck = $faker->boolean(20);
-                //日曜日、本日は空欄処理 (本日空欄処理はUIで手動確認の為)
-                // if ($date->isSunday() || $date->isSameDay(now())) {
-                if ($breakCheck) {
+                $testCheck = $date->isSameDay(now()) && in_array($user->id, [1, 2]);
+
+                if ($breakCheck || $testCheck) {
                     $attendance = Attendance::factory()->create([
                         'user_id' => $user->id,
                         'date' => $date,

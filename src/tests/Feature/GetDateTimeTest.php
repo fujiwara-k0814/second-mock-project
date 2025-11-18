@@ -8,6 +8,7 @@ use Database\Seeders\UsersTableSeeder;
 use App\Models\User;
 use Illuminate\Support\Carbon;
 
+//ID:4 日時取得機能
 class GetDateTimeTest extends TestCase
 {
     use RefreshDatabase;

@@ -27,14 +27,14 @@
         @enderror
     </div>
     <label for="password" class="register-form__label">パスワード</label>
-    <input type="text" name="password" id="password" class="register-form__input">
+    <input type="password" name="password" id="password" class="register-form__input">
     <div class="register-form__error">
         @error('password')
             {{ $message }}
         @enderror
     </div>
     <label for="password_confirmation" class="register-form__label">パスワード確認</label>
-    <input type="text" name="password_confirmation" id="password_confirmation" 
+    <input type="password" name="password_confirmation" id="password_confirmation" 
         class="register-form__input">
     <div class="register-form__error">
         @error('password_confirmation')

@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
+//ID:1 認証機能（一般ユーザー）
 class UserRegisterTest extends TestCase
 {
     use RefreshDatabase;

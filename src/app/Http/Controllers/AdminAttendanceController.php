@@ -14,10 +14,12 @@ use App\Services\AmendmentApplicationProcessor;
 
 class AdminAttendanceController extends Controller
 {
+    //ルート引数の初期値を'null'に指定
     public function index($year = null, $month = null, $day = null)
     {
+        //'now()->**'省略時に現在年月を表示
         $targetDate = Carbon::createFromDate(
-            $year ?? Carbon::now()->year,   //'now()->**'省略時に現在年月を表示
+            $year ?? Carbon::now()->year,
             $month ?? Carbon::now()->month,
             $day ?? Carbon::now()->day,
         );

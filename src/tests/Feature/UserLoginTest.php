@@ -7,6 +7,7 @@ use Tests\TestCase;
 use App\Models\User;
 use Database\Seeders\UsersTableSeeder;
 
+//ID:2 ログイン認証機能（一般ユーザー）
 class UserLoginTest extends TestCase
 {
     use RefreshDatabase;

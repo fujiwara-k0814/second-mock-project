@@ -17,7 +17,7 @@ class UserCorrectionRequestController extends Controller
         if (request('tab') === 'approved') {
             $applications = AmendmentApplication::with(
                 'attendance.user',
-                'approvalStatus'
+                'approvalStatus',
             )
             ->where('approval_status_id', ApplicationStatus::APPROVED->value)
             ->whereIn('attendance_id', $attendanceIds)
@@ -26,7 +26,7 @@ class UserCorrectionRequestController extends Controller
         } else {
             $applications = AmendmentApplication::with(
                 'attendance.user',
-                'approvalStatus'
+                'approvalStatus',
             )
             ->where('approval_status_id', ApplicationStatus::PENDING->value)
             ->whereIn('attendance_id', $attendanceIds)

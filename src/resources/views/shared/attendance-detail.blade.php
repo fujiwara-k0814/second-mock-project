@@ -34,10 +34,10 @@
             </td>
         </tr>
         <tr class="clock-row">
-            <th><label for="clock">出勤・退勤</label></th>
+            <th><label for="clock_in">出勤・退勤</label></th>
             <td>
                 <div class="wrapper">
-                    <input type="time" name="clock_in" id="clock" 
+                    <input type="time" name="clock_in" id="clock_in" 
                         class="detail-form__input {{ $statusCode === 'pending' ? "disable" : '' }}" 
                         @if($statusCode === 'pending') readonly @endif 
                         value="{{ old('clock_in') 
@@ -50,7 +50,7 @@
                 </div>
                 <span>～</span>
                 <div class="wrapper">
-                    <input type="time" name="clock_out" id="clock" 
+                    <input type="time" name="clock_out" id="clock_out" 
                         class="detail-form__input {{ $statusCode === 'pending' ? "disable" : '' }}" 
                         @if($statusCode === 'pending') readonly @endif  
                         value="{{ old('clock_out') 
@@ -67,13 +67,13 @@
             <tr class="break-row">
                 <th>
                     {{-- 休憩→休憩2→休憩3を作成するためindex=0除外で以降+1 --}}
-                    <label for="break[{{ $index }}]">
+                    <label for="break_start_{{ $index }}">
                         休憩{{ $index === 0 ? '' : $index + 1 }}
                     </label>
                 </th>
                 <td>
                     <div class="wrapper">
-                        <input type="time" name="break_start[{{ $index }}]" id="break[{{ $index }}]" 
+                        <input type="time" name="break_start[{{ $index }}]" id="break_start_{{ $index }}" 
                             class="detail-form__input {{ $statusCode === 'pending' ? "disable" : '' }}" 
                             @if($statusCode === 'pending') readonly @endif 
                             value="{{ old("break_start.$index") 
@@ -86,7 +86,7 @@
                     </div>
                     <span>～</span>
                     <div class="wrapper">
-                        <input type="time" name="break_end[{{ $index }}]" id="break[{{ $index }}]" 
+                        <input type="time" name="break_end[{{ $index }}]" id="break_end_{{ $index }}" 
                             class="detail-form__input {{ $statusCode === 'pending' ? "disable" : '' }}" 
                             @if($statusCode === 'pending') readonly @endif 
                             value="{{ old("break_end.$index") 
@@ -102,11 +102,11 @@
         @empty
             <tr class="break-row">
                 <th>
-                    <label for="break[0]">休憩</label>
+                    <label for="break_start_0">休憩</label>
                 </th>
                 <td>
                     <div class="wrapper">
-                        <input type="time" name="break_start[0]" id="break[0]" 
+                        <input type="time" name="break_start[0]" id="break_start_0" 
                             class="detail-form__input {{ $statusCode === 'pending' ? "disable" : '' }}" 
                             @if($statusCode === 'pending') readonly @endif 
                             value="{{ old('break_end.0') }}">
@@ -118,7 +118,7 @@
                     </div>
                     <span>～</span>
                     <div class="wrapper">
-                        <input type="time" name="break_end[0]" id="break[0]" 
+                        <input type="time" name="break_end[0]" id="break_end_0" 
                             class="detail-form__input {{ $statusCode === 'pending' ? "disable" : '' }}" 
                             @if($statusCode === 'pending') readonly @endif 
                             value="{{ old('break_end.0') }}">

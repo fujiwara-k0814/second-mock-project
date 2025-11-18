@@ -8,6 +8,7 @@ use Database\Seeders\UsersTableSeeder;
 use App\Models\User;
 use Illuminate\Support\Carbon;
 
+//ID:5 ステータス確認機能
 class CheckStatusTest extends TestCase
 {
     use RefreshDatabase;

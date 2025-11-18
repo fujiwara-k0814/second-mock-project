@@ -32,5 +32,7 @@ class UsersTableSeeder extends Seeder
             'password' => Hash::make('password'),
         ];
         User::create($param);
+
+        User::factory(5)->create();
     }
 }

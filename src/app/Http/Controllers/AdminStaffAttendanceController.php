@@ -18,11 +18,13 @@ class AdminStaffAttendanceController extends Controller
     //ルート引数の初期値を'null'に指定
     public function show($user_id, $year = null, $month = null)
     {
+        //'now()->**'省略時に現在年月を表示
+        //1日を起点とさせる為'1'を指定
         $user = User::find($user_id);
         $targetDate = Carbon::createFromDate(
-            $year ?? Carbon::now()->year,   //'now()->**'省略時に現在年月を表示
+            $year ?? Carbon::now()->year,
             $month ?? Carbon::now()->month,
-            1,   //1日を起点とさせる為'1'を指定
+            1,
         )
         ->startOfMonth();
         $prev = $targetDate->copy()->subMonth();

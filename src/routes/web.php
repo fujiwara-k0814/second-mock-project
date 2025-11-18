@@ -29,10 +29,12 @@ Route::middleware('auth:web', 'verified')->prefix('attendance')->group(function 
     Route::get('/detail/{id}', [UserAttendanceController::class, 'edit']);
     Route::post('/detail/{id}', [UserAttendanceController::class, 'application']);
 });
+
 //ユーザー：申請関連
 Route::middleware(['auth:web', 'verified'])->group(function () {
     Route::get('/stamp_correction_request/list', [UserCorrectionRequestController::class, 'index']);
 });
+
 //ユーザー：メール認証(システム制約でname付与)
 Route::get('/email/verify', [VerifyEmailController::class, 'notice'])
     ->middleware('auth')
@@ -59,9 +61,12 @@ Route::prefix('admin')->group(function () {
         Route::post('/attendance/{id}', [AdminAttendanceController::class, 'correction']);
         Route::get('/staff/list', [AdminStaffAttendanceController::class, 'index']);
         Route::get('/attendance/staff/{id}/{year?}/{month?}', [AdminStaffAttendanceController::class, 'show']);
-        Route::get('/attendance/staff/{id}/{year?}/{month?}/export', [StaffAttendanceExportController::class, 'export']);
+        Route::get('/attendance/staff/{id}/{year?}/{month?}/export', [
+            StaffAttendanceExportController::class, 'export'
+        ]);
     });
 });
+
 //管理者：申請関連
 Route::middleware(['auth:admin'])->prefix('admin/stamp_correction_request')->group(function () {
     Route::get('list', [AdminCorrectionRequestController::class, 'index']);

@@ -89,17 +89,17 @@ function addBreakRow(index, startValue = '', endValue = '', startError = '', end
     newRow.classList.add('break-row');
     newRow.innerHTML = `
         <th>
-            <label for="break[${index}]">休憩${index === 0 ? '' : index + 1}</label>
+            <label for="break_start_${index}">休憩${index === 0 ? '' : index + 1}</label>
         </th>
         <td>
             <div class="wrapper">
-                <input type="time" name="break_start[${index}]" id="break[${index}]"
+                <input type="time" name="break_start[${index}]" id="break_start_${index}"
                     class="detail-form__input ${disableClass}" ${isReadonly} value="${startValue}">
                 <div class="detail-form__error">${startError}</div>
             </div>
             <span>～</span>
             <div class="wrapper">
-                <input type="time" name="break_end[${index}]" id="break[${index}]"
+                <input type="time" name="break_end[${index}]" id="break_end_${index}"
                     class="detail-form__input ${disableClass}" ${isReadonly} value="${endValue}">
                 <div class="detail-form__error">${endError}</div>
             </div>

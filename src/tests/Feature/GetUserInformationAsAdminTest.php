@@ -12,6 +12,7 @@ use Illuminate\Support\Carbon;
 use App\Models\AttendanceBreak;
 use App\Models\Attendance;
 
+//ID:14 ユーザー情報取得機能（管理者）
 class GetUserInformationAsAdminTest extends TestCase
 {
     use RefreshDatabase;
@@ -29,7 +30,7 @@ class GetUserInformationAsAdminTest extends TestCase
      *
      * @return void
      */
-    //管理者 ユーザー一覧 全表示
+    //管理者 ユーザー勤怠一覧 全表示
     public function test_admin_user_list_display_all()
     {
         $firstUser = User::find(1);

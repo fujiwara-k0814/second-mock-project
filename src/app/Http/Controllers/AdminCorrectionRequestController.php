@@ -39,7 +39,8 @@ class AdminCorrectionRequestController extends Controller
             'attendance.user',
             'approvalStatus',
             'amendmentApplicationBreaks'
-        ])->find($application_id);
+        ])
+        ->find($application_id);
         
         $breaks = AmendmentApplicationBreak::where(
             'amendment_application_id', $application_id
@@ -47,7 +48,7 @@ class AdminCorrectionRequestController extends Controller
             ->orderBy('break_start')
             ->get();
         
-        //空のレコード追加
+        //空行表示のため空のレコード追加
         if ($breaks) {
             $breaks->push(new AmendmentApplicationBreak([
                 'break_start' => null,
@@ -65,6 +66,7 @@ class AdminCorrectionRequestController extends Controller
     {
         $application = AmendmentApplication::find($amendment_id);
 
+        //修正申請内容を勤怠レコード、休憩レコードへ反映
         app(AmendmentApplicationProcessor::class)->applyToAttendance($application);
 
         return redirect("admin/stamp_correction_request/approve/$amendment_id");
