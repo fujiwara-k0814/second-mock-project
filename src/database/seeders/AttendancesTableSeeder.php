@@ -25,24 +25,17 @@ class AttendancesTableSeeder extends Seeder
     
         $users = User::all();
 
-        $startDate = Carbon::now()->subMonths(2)->startOfMonth();
-        $endDate = Carbon::now()->addMonths(2)->endOfMonth();
+        $startDate = Carbon::now()->subMonths(1)->startOfMonth();
+        $endDate = Carbon::now()->addMonths(1)->endOfMonth();
         
-        //前後2か月分の勤怠レコードを作成
+        //前後1か月分の勤怠レコードを作成
         foreach ($users as $user) {
             foreach ($startDate->toPeriod($endDate) as $date) {
-                //20%の確率、かつ、テストユーザーは本日を空欄処理 (本日空欄処理はUIで手動確認の為)
+                //20%の確率、かつ、テストユーザーは本日を未処理 (本日空欄処理はUIで手動確認の為)
                 $breakCheck = $faker->boolean(20);
                 $testCheck = $date->isSameDay(now()) && in_array($user->id, [1, 2]);
 
                 if ($breakCheck || $testCheck) {
-                    $attendance = Attendance::factory()->create([
-                        'user_id' => $user->id,
-                        'date' => $date,
-                        'clock_in' => null,
-                        'clock_out' => null,
-                        'comment' => null,
-                    ]);
                     continue;
                 }
 

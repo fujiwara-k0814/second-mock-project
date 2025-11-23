@@ -115,6 +115,22 @@ class UserAttendanceController extends Controller
         $prev = $targetDate->copy()->subMonth();
         $next = $targetDate->copy()->addMonth();
 
+        //該当月の日数生成
+        $daysInMonth = $targetDate->daysInMonth;
+        $attendances = collect();
+
+        //空日付勤怠作成
+        for ($day = 1; $day <= $daysInMonth; $day++) {
+            $date = $targetDate->copy()->day($day);
+            $attendance = Attendance::firstOrCreate([
+                'user_id' => $user->id,
+                'date'    => $date->toDateString(),
+            ], [
+                'clock_in' => null,
+                'clock_out' => null,
+            ]);
+        }
+
         $attendances = $user->attendances()
             ->with('attendanceBreaks')
             ->whereBetween('date', [

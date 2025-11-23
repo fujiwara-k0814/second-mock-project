@@ -11,6 +11,7 @@ use App\Enums\ApplicationStatus;
 use App\Http\Requests\StampCorrectionRequest;
 use App\Services\AttendanceSummaryService;
 use App\Services\AmendmentApplicationProcessor;
+use App\Models\User;
 
 class AdminAttendanceController extends Controller
 {
@@ -26,9 +27,23 @@ class AdminAttendanceController extends Controller
         $prev = $targetDate->copy()->subDay();
         $next = $targetDate->copy()->addDay();
 
+        $attendances = collect();
+        $users = User::all();
+
+        //ユーザー空日付勤怠作成
+        foreach ($users as $user) {
+            $attendance = Attendance::firstOrCreate([
+                'user_id' => $user->id,
+                'date'    => $targetDate->toDateString(),
+            ], [
+                'clock_in' => null,
+                'clock_out' => null,
+            ]);
+        }
+
         $attendances = Attendance::with('user', 'amendmentApplications')
             ->whereDate('date', $targetDate)
-            ->orderBy('created_at')
+            ->orderBy('user_id')
             ->get();
 
         //プロパティ追加

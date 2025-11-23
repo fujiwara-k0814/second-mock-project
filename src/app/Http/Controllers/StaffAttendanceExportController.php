@@ -8,6 +8,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use App\Services\AttendanceSummaryService;
+use App\Models\Attendance;
 
 class StaffAttendanceExportController extends Controller
 {
@@ -44,9 +45,11 @@ class StaffAttendanceExportController extends Controller
             '_' . 
             now()->format('Ymd_His') . 
             '.csv';
-        
+
         //csv形式文字列生成
-        $csvContent = $this->generateAttendanceCsv($attendances, $user);
+        $csvContent = mb_convert_encoding(
+            $this->generateAttendanceCsv($attendances, $user), 'SJIS-win', 'UTF-8'
+        );
 
         //保存先がstorageの時に'storage/app/exports'に保存
         if ($request->destination === 'storage') {
@@ -58,7 +61,7 @@ class StaffAttendanceExportController extends Controller
         return new StreamedResponse(function () use ($csvContent) {
             echo $csvContent;
         }, 200, [
-            'Content-Type' => 'text/csv',
+            'Content-Type' => 'text/csv; charset=Shift_JIS',
             'Content-Disposition' => "attachment; filename={$filename}",
         ]);
     }
